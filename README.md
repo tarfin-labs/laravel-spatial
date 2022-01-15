@@ -88,7 +88,7 @@ $address->getLng();
 use App\Models\Address;
 
 Address::create([
-    'name'      => 'Home',
+    'name'      => 'Bag End',
     'address'   => '1 Bagshot Row, Hobbiton, Shire',
     'location'  => new Point(lat: 25.45634, lng: 35.54331),
 ]);
