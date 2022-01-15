@@ -1,6 +1,6 @@
 {
   "name": "tarfin-labs/laravel-spatial",
-  "description": "A Lightweight spatial package to calculate distances between two coordinates for Laravel",
+  "description": "Laravel package to work with geospatial data types and functions.",
   "keywords": [
     "tarfin-labs",
     "laravel-spatial"
@@ -16,7 +16,7 @@
     }
   ],
   "require": {
-    "php": "^7.4|^8.0",
+    "php": "^8.0",
     "illuminate/support": "^8.0"
   },
   "require-dev": {
