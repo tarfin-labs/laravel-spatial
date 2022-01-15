@@ -15,6 +15,13 @@ composer require tarfin-labs/laravel-spatial
 ```
 
 ## Usage
+Generate a new model with a migration file:
+
+```bash
+php artisan make:model Address --migration
+```
+
+Extend the migration file from `TarfinLabs\LaravelSpatial\Migrations\SpatialMigration` and add a spatial column:
 
 ```php
 use TarfinLabs\LaravelSpatial\Migrations\SpatialMigration;
@@ -32,6 +39,8 @@ return new class extends SpatialMigration {
     }
 }
 ```
+
+Fill the `$fillable`, `$casts` and `$geometry` arrays in the model:
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -56,6 +65,8 @@ class Address extends Model {
 }
 ```
 
+Filter addresses within 10 km of the given coordinate:
+
 ```php
 use TarfinLabs\LaravelSpatial\Types\Point;
 use App\Models\Address;
@@ -64,6 +75,8 @@ Address::query()
        ->withinDistanceTo('location', new Point(lat: 25.45634, lng: 35.54331), 10000)
        ->get();
 ```
+
+Select distance to given coordinate as meter:
 
 ```php
 use TarfinLabs\LaravelSpatial\Types\Point;
@@ -74,6 +87,8 @@ Address::query()
        ->get();
 ```
 
+Get latitude and longitude of the location:
+
 ```php
 use App\Models\Address;
 
@@ -83,6 +98,8 @@ $address->location; // TarfinLabs\LaravelSpatial\Types\Point
 $address->getLat();
 $address->getLng();
 ```
+
+Create a new address with location:
 
 ```php
 use App\Models\Address;
