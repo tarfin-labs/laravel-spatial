@@ -21,7 +21,7 @@ class LocationCast implements CastsAttributes, SerializesCastableAttributes
     public function set($model, string $key, $value, array $attributes): Expression
     {
         if (!$value instanceof Point) {
-            throw new Exception(message: 'The location field must be instance of App\Services\Point.');
+            throw new Exception(message: 'The '.$key.' field must be instance of '.Point::class);
         }
 
         return DB::raw(value: "ST_GeomFromText('POINT({$value->getLng()} {$value->getLat()})')");
