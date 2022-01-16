@@ -7,12 +7,21 @@ use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Contracts\Database\Eloquent\SerializesCastableAttributes;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use TarfinLabs\LaravelSpatial\Types\Point;
 
 class LocationCast implements CastsAttributes, SerializesCastableAttributes
 {
     public function get($model, string $key, $value, array $attributes): Point
     {
+        $coordinates = explode(',', $value);
+
+        if (count($coordinates) > 0) {
+            $location = explode(',', str_replace(['POINT(', ')', ' '], ['', '', ','], $coordinates[0]));
+
+            return new Point(lat: $location[1], lng: $location[0], srid: $coordinates[1]);
+        }
+
         $location = explode(',', str_replace(['POINT(', ')', ' '], ['', '', ','], $value));
 
         return new Point(lat: $location[1], lng: $location[0]);
@@ -24,14 +33,19 @@ class LocationCast implements CastsAttributes, SerializesCastableAttributes
             throw new Exception(message: 'The '.$key.' field must be instance of '.Point::class);
         }
 
+        if ($value->getSrid() > 0) {
+            return DB::raw(value: "ST_GeomFromText('POINT({$value->getLng()} {$value->getLat()})', {$value->getSrid()})");
+        }
+
         return DB::raw(value: "ST_GeomFromText('POINT({$value->getLng()} {$value->getLat()})')");
     }
 
     public function serialize($model, string $key, $value, array $attributes): array
     {
         return [
-            'lat' => $value->getLat(),
-            'lng' => $value->getLng(),
+            'lat'  => $value->getLat(),
+            'lng'  => $value->getLng(),
+            'srid' => $value->getSrid(),
         ];
     }
 }
