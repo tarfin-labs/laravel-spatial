@@ -16,7 +16,7 @@ class LocationCast implements CastsAttributes, SerializesCastableAttributes
     {
         $coordinates = explode(',', $value);
 
-        if (count($coordinates) > 0) {
+        if (count($coordinates) > 1) {
             $location = explode(',', str_replace(['POINT(', ')', ' '], ['', '', ','], $coordinates[0]));
 
             return new Point(lat: $location[1], lng: $location[0], srid: $coordinates[1]);
