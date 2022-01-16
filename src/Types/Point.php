@@ -10,10 +10,13 @@ class Point
 
     protected float $lng;
 
-    public function __construct(float $lat = 0, float $lng = 0)
+    protected int $srid;
+
+    public function __construct(float $lat = 0, float $lng = 0, int $srid = 0)
     {
         $this->lat = $lat;
         $this->lng = $lng;
+        $this->srid = $srid;
     }
 
     public function getLat(): float
@@ -24,5 +27,10 @@ class Point
     public function getLng(): float
     {
         return $this->lng;
+    }
+
+    public function getSrid(): int
+    {
+        return $this->srid;
     }
 }
