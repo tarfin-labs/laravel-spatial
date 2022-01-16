@@ -6,6 +6,16 @@
 
 Laravel package to work with geospatial data types and functions.
 
+For now it supports only MySql Spatial Data Types and Functions.
+
+**Supported data types:**
+- `Point`
+
+**Available Scopes:**
+- `withinDistanceTo($column, $coordinates, $distance)`
+- `selectDistanceTo($column, $coordinates)`
+- `orderByDistanceTo($column, $coordinates, 'asc')`
+
 ## Installation
 
 You can install the package via composer:
@@ -21,7 +31,8 @@ Generate a new model with a migration file:
 php artisan make:model Address --migration
 ```
 
-Extend the migration file from `TarfinLabs\LaravelSpatial\Migrations\SpatialMigration` and add a spatial column:
+To avoid `Doctrine\DBAL\Exception : Unknown database type point requested, Doctrine\DBAL\Platforms\MySQL80Platform may not support it.
+` exception, extend the migration file from `TarfinLabs\LaravelSpatial\Migrations\SpatialMigration` and add a spatial column. It just adds `point` type to Doctrine mapped types.
 
 ```php
 use TarfinLabs\LaravelSpatial\Migrations\SpatialMigration;
@@ -29,6 +40,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends SpatialMigration {
+    
     public function up(): void
     {
         Schema::create('addresses', function (Blueprint $table) {
@@ -37,10 +49,11 @@ return new class extends SpatialMigration {
             $table->spatialIndex(['location']);
         })
     }
+
 }
 ```
 
-Fill the `$fillable`, `$casts` and `$geometry` arrays in the model:
+Fill the `$fillable`, `$casts` arrays in the model:
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -48,6 +61,7 @@ use TarfinLabs\LaravelSpatial\Casts\LocationCast;
 use TarfinLabs\LaravelSpatial\Traits\HasSpatial;
 
 class Address extends Model {
+
     use HasSpatial;
 
     protected $fillable = [
@@ -60,8 +74,7 @@ class Address extends Model {
     protected array $casts = [
         'location' => LocationCast::class
     ];
-    
-    protected array $geometry = ['location'];
+
 }
 ```
 
@@ -95,8 +108,8 @@ use App\Models\Address;
 $address = Address::find(1);
 $address->location; // TarfinLabs\LaravelSpatial\Types\Point
 
-$address->getLat();
-$address->getLng();
+$address->location->getLat();
+$address->location->getLng();
 ```
 
 Create a new address with location:
