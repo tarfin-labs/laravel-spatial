@@ -1,10 +1,6 @@
 name: run-tests
 
-on:
-    push:
-        branches: [master]
-    pull_request:
-        branches: [master]
+on: [push, pull_request]
 
 jobs:
     test:
@@ -18,7 +14,7 @@ jobs:
                 stability: [prefer-lowest, prefer-stable]
                 include:
                     - laravel: 8.*
-                      testbench: ^6.6
+                      testbench: ^6.*
 
         name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
@@ -43,13 +39,11 @@ jobs:
                   extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
                   coverage: none
 
-            - name: Setup problem matchers
-              run: |
-                  echo "::add-matcher::${{ runner.tool_cache }}/php.json"
-                  echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
             - name: Install dependencies
-              run: |
-                  composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
-                  composer update --${{ matrix.stability }} --prefer-dist --no-interaction
+              run: composer install --no-progress --no-ansi --profile --no-interaction --no-scripts --prefer-dist
+
+            - name: Start database server
+              run: sudo /etc/init.d/mysql start
+
             - name: Execute tests
-              run: vendor/bin/phpunit
+              run: vendor/bin/phpunit --testdox --colors=always --exclude-group skipped
