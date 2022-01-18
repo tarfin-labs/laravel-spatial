@@ -46,7 +46,7 @@ trait HasSpatial
         $query->orderByRaw("ST_Distance(
             ST_SRID({$column}, ?),
             ST_SRID(Point(?, ?), ?)
-        )".$direction, [
+        ) ".$direction, [
             $point->getSrid(),
             $point->getLng(),
             $point->getLat(),
@@ -60,7 +60,7 @@ trait HasSpatial
         $casts = collect($this->getCasts())->filter(fn ($cast) => $cast === LocationCast::class);
 
         foreach ($casts as $column => $cast) {
-            $raw .= " CONCAT(ST_AsText({$this->getTable()}.{$column}), ',', ST_SRID({$this->getTable()}.{$column})) as {$column}, ";
+            $raw .= "CONCAT(ST_AsText({$this->getTable()}.{$column}), ',', ST_SRID({$this->getTable()}.{$column})) as {$column}, ";
         }
 
         $raw = substr($raw, 0, -2);
