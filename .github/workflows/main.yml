@@ -13,7 +13,7 @@ jobs:
                 dependency-version: [prefer-lowest, prefer-stable]
                 include:
                     - laravel: 8.*
-                      testbench: ^6.*
+                      testbench: 6.*
 
         name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
 
@@ -45,4 +45,6 @@ jobs:
               run: sudo /etc/init.d/mysql start
 
             - name: Execute tests
+              env:
+                  DB_PORT: ${{ job.services.mysql.ports['3306'] }}
               run: vendor/bin/phpunit --testdox --colors=always --exclude-group skipped

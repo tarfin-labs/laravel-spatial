@@ -17,7 +17,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
         $app['config']->set('database.connections.mysql', [
             'driver'    => 'mysql',
             'host'      => '127.0.0.1',
-            'port'      => 3306,
+            'port'      => env('DB_PORT', 3306),
             'database'  => 'laravel_spatial_test',
             'username'  => 'root',
         ]);
