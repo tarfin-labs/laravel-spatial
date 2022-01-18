@@ -5,7 +5,7 @@ namespace TarfinLabs\LaravelSpatial\Tests;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use TarfinLabs\LaravelSpatial\Casts\LocationCast;
-use TarfinLabs\LaravelSpatial\Tests\Stubs\Models\Address;
+use TarfinLabs\LaravelSpatial\Tests\TestModels\Address;
 use TarfinLabs\LaravelSpatial\Types\Point;
 
 class LocationCastTest extends TestCase

@@ -3,7 +3,7 @@
 namespace TarfinLabs\LaravelSpatial\Tests;
 
 use Illuminate\Support\Collection;
-use TarfinLabs\LaravelSpatial\Tests\Stubs\Models\Address;
+use TarfinLabs\LaravelSpatial\Tests\TestModels\Address;
 use TarfinLabs\LaravelSpatial\Types\Point;
 
 class HasSpatialTest extends TestCase
