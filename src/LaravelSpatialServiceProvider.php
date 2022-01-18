@@ -14,7 +14,7 @@ class LaravelSpatialServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__.'/../config/config.php' => config_path('laravel-spatial.php'),
-            ], 'config');
+            ], 'laravel-spatial');
         }
     }
 
