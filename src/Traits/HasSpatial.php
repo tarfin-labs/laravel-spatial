@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TarfinLabs\LaravelSpatial\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -59,7 +61,7 @@ trait HasSpatial
     {
         $raw = '';
 
-        foreach ($this->getLocationCastedProperties() as $column => $cast) {
+        foreach ($this->getLocationCastedAttributes() as $column) {
             $raw .= "CONCAT(ST_AsText({$this->getTable()}.{$column}), ',', ST_SRID({$this->getTable()}.{$column})) as {$column}, ";
         }
 
@@ -68,8 +70,8 @@ trait HasSpatial
         return parent::newQuery($excludeDeleted)->addSelect('*', DB::raw($raw));
     }
 
-    public function getLocationCastedProperties(): Collection
+    public function getLocationCastedAttributes(): Collection
     {
-        return collect($this->getCasts())->filter(fn ($cast) => $cast === LocationCast::class);
+        return collect($this->getCasts())->filter(fn ($cast) => $cast === LocationCast::class)->keys();
     }
 }
