@@ -46,7 +46,7 @@ return new class extends SpatialMigration {
         Schema::create('addresses', function (Blueprint $table) {
             $table->point('location');
             
-            $table->spatialIndex(['location']);
+            $table->spatialIndex('location');
         })
     }
 
