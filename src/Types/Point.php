@@ -12,11 +12,14 @@ class Point
 
     protected int $srid;
 
-    public function __construct(float $lat = 0, float $lng = 0, int $srid = 0)
+    public function __construct(float $lat = 0, float $lng = 0, ?int $srid = null)
     {
         $this->lat = $lat;
         $this->lng = $lng;
-        $this->srid = $srid;
+
+        $this->srid = is_null($srid)
+            ? config('laravel-spatial.default_srid') ?? 0
+            : $srid;
     }
 
     public function getLat(): float
