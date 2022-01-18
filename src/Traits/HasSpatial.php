@@ -3,6 +3,7 @@
 namespace TarfinLabs\LaravelSpatial\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use TarfinLabs\LaravelSpatial\Casts\LocationCast;
 use TarfinLabs\LaravelSpatial\Types\Point;
@@ -57,14 +58,18 @@ trait HasSpatial
     public function newQuery(bool $excludeDeleted = true): Builder
     {
         $raw = '';
-        $casts = collect($this->getCasts())->filter(fn ($cast) => $cast === LocationCast::class);
 
-        foreach ($casts as $column => $cast) {
+        foreach ($this->getLocationCastedProperties() as $column => $cast) {
             $raw .= "CONCAT(ST_AsText({$this->getTable()}.{$column}), ',', ST_SRID({$this->getTable()}.{$column})) as {$column}, ";
         }
 
         $raw = substr($raw, 0, -2);
 
         return parent::newQuery($excludeDeleted)->addSelect('*', DB::raw($raw));
+    }
+
+    public function getLocationCastedProperties(): Collection
+    {
+        return collect($this->getCasts())->filter(fn ($cast) => $cast === LocationCast::class);
     }
 }
