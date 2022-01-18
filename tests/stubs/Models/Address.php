@@ -1,6 +1,8 @@
 <?php
 
-namespace TarfinLabs\LaravelSpatial\Tests\stubs;
+declare(strict_types=1);
+
+namespace TarfinLabs\LaravelSpatial\Tests\Stubs\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use TarfinLabs\LaravelSpatial\Casts\LocationCast;
