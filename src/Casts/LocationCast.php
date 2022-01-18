@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TarfinLabs\LaravelSpatial\Casts;
 
 use Exception;
@@ -7,7 +9,6 @@ use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Contracts\Database\Eloquent\SerializesCastableAttributes;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use TarfinLabs\LaravelSpatial\Types\Point;
 
 class LocationCast implements CastsAttributes, SerializesCastableAttributes
