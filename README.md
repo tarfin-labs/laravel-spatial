@@ -34,7 +34,7 @@ php artisan make:model Address --migration
 
 ### 1- Migrations:
 
-You need to extend the migration from `TarfinLabs\LaravelSpatial\Migrations\SpatialMigration` to add a spatial data field.
+To add a spatial data field, you need to extend the migration from `TarfinLabs\LaravelSpatial\Migrations\SpatialMigration`.
 
 It is a simple abstract class that adds `point` spatial data type to Doctrine mapped types in the constructor.
 
@@ -96,9 +96,9 @@ class Address extends Model {
 
 ### 3- Spatial Data Types:
 #### ***Point:***
-`Point` represents the coordinates of a location and contains `latitude`, `longitude` and `srid` properties.
+`Point` represents the coordinates of a location and contains `latitude`, `longitude`, and `srid` properties.
 
-At this point, it is important to understand what SRID is. Each spatial instance has a spatial reference identifier (SRID). The SRID corresponds to a spatial reference system based on the specific ellipsoid used for either flat-earth mapping or round-earth mapping. A spatial column can contain objects with different SRIDs.
+At this point, it is crucial to understand what SRID is. Each spatial instance has a spatial reference identifier (SRID). The SRID corresponds to a spatial reference system based on the specific ellipsoid used for either flat-earth mapping or round-earth mapping. A spatial column can contain objects with different SRIDs.
 
 >For details about SRID you can follow the link:
 https://en.wikipedia.org/wiki/Spatial_reference_system
@@ -116,7 +116,7 @@ $location->getLng(); // 39.123456
 $locatipn->getSrid(); // 4326
 ```
 
-You can override the default SRID via the `laravel-spatial` config file. To do that you should publish the config migration file using vendor:publish artisan command:
+You can override the default SRID via the `laravel-spatial` config file. To do that, you should publish the config migration file using vendor:publish artisan command:
 
 ```bash
 php artisan vendor:publish --provider="TarfinLabs\LaravelSpatial\LaravelSpatialServiceProvider"
