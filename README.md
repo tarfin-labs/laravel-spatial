@@ -6,7 +6,7 @@
 
 Laravel package to work with geospatial data types and functions.
 
-For now it supports only MySql Spatial Data Types and Functions.
+For now, it supports only MySql Spatial Data Types and Functions.
 
 **Supported data types:**
 - `Point`
@@ -34,9 +34,9 @@ php artisan make:model Address --migration
 
 ### 1- Migrations:
 
-You need to extend the migration from `TarfinLabs\LaravelSpatial\Migrations\SpatialMigration` in order to add a spatial data field.
+You need to extend the migration from `TarfinLabs\LaravelSpatial\Migrations\SpatialMigration` to add a spatial data field.
 
-It is a simple abstract class that adds `point` spatial data type to Doctrine mapped types in constructor.
+It is a simple abstract class that adds `point` spatial data type to Doctrine mapped types in the constructor.
 
 ```php
 use TarfinLabs\LaravelSpatial\Migrations\SpatialMigration;
@@ -55,11 +55,11 @@ return new class extends SpatialMigration {
 }
 ```
 
-The migration above creates an `addresses` table with `location` spatial column.
+The migration above creates an `addresses` table with a `location` spatial column.
 
 >Spatial columns with no SRID attribute are not SRID-restricted and accept values with any SRID. However, the optimizer cannot use SPATIAL indexes on them until the column definition is modified to include an SRID attribute, which may require that the column contents first be modified so that all values have the same SRID.
 
-So you should give an SRID attribute to use spatial index in the migrations:
+So you should give an SRID attribute to use spatial indexes in the migrations:
 ```php
 Schema::create('addresses', function (Blueprint $table) {
     $table->point('location', 4326);
@@ -98,7 +98,7 @@ class Address extends Model {
 #### ***Point:***
 `Point` represents the coordinates of a location and contains `latitude`, `longitude` and `srid` properties.
 
-In this point it is important to understand what SRID is. Each spatial instance has a spatial reference identifier (SRID). The SRID corresponds to a spatial reference system based on the specific ellipsoid used for either flat-earth mapping or round-earth mapping. A spatial column can contain objects with different SRIDs.
+At this point, it is important to understand what SRID is. Each spatial instance has a spatial reference identifier (SRID). The SRID corresponds to a spatial reference system based on the specific ellipsoid used for either flat-earth mapping or round-earth mapping. A spatial column can contain objects with different SRIDs.
 
 >For details about SRID you can follow the link:
 https://en.wikipedia.org/wiki/Spatial_reference_system
@@ -116,7 +116,7 @@ $location->getLng(); // 39.123456
 $locatipn->getSrid(); // 4326
 ```
 
-You can override the default SRID via `latavel-spatial` config file. To do that you should publish config migration file using vendor:publish artisan command:
+You can override the default SRID via the `laravel-spatial` config file. To do that you should publish the config migration file using vendor:publish artisan command:
 
 ```bash
 php artisan vendor:publish --provider="TarfinLabs\LaravelSpatial\LaravelSpatialServiceProvider"
