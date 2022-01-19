@@ -16,6 +16,7 @@ For now it supports only MySql Spatial Data Types and Functions.
 - `selectDistanceTo($column, $coordinates)`
 - `orderByDistanceTo($column, $coordinates, 'asc')`
 
+***
 ## Installation
 
 You can install the package via composer:
@@ -31,8 +32,11 @@ Generate a new model with a migration file:
 php artisan make:model Address --migration
 ```
 
-To avoid `Doctrine\DBAL\Exception : Unknown database type point requested, Doctrine\DBAL\Platforms\MySQL80Platform may not support it.
-` exception, extend the migration file from `TarfinLabs\LaravelSpatial\Migrations\SpatialMigration` and add a spatial column. It just adds `point` type to Doctrine mapped types.
+### 1- Migrations:
+
+You need to extend the migration from `TarfinLabs\LaravelSpatial\Migrations\SpatialMigration` in order to add a spatial data field.
+
+It is a simple abstract class that adds `point` spatial data type to Doctrine mapped types in constructor.
 
 ```php
 use TarfinLabs\LaravelSpatial\Migrations\SpatialMigration;
@@ -45,14 +49,26 @@ return new class extends SpatialMigration {
     {
         Schema::create('addresses', function (Blueprint $table) {
             $table->point('location');
-            
-            $table->spatialIndex('location');
         })
     }
 
 }
 ```
 
+The migration above creates an `addresses` table with `location` spatial column.
+
+>Spatial columns with no SRID attribute are not SRID-restricted and accept values with any SRID. However, the optimizer cannot use SPATIAL indexes on them until the column definition is modified to include an SRID attribute, which may require that the column contents first be modified so that all values have the same SRID.
+
+So you should give an SRID attribute to use spatial index in the migrations:
+```php
+Schema::create('addresses', function (Blueprint $table) {
+    $table->point('location', 4326);
+    
+    $table->spatialIndex('location');
+})
+```
+***
+### 2- Models:
 Fill the `$fillable`, `$casts` arrays in the model:
 
 ```php
@@ -78,6 +94,43 @@ class Address extends Model {
 }
 ```
 
+### 3- Spatial Data Types:
+#### ***Point:***
+`Point` represents the coordinates of a location and contains `latitude`, `longitude` and `srid` properties.
+
+In this point it is important to understand what SRID is. Each spatial instance has a spatial reference identifier (SRID). The SRID corresponds to a spatial reference system based on the specific ellipsoid used for either flat-earth mapping or round-earth mapping. A spatial column can contain objects with different SRIDs.
+
+>For details about SRID you can follow the link:
+https://en.wikipedia.org/wiki/Spatial_reference_system
+
+- Default value of `latitude`, `longitude` parameters is `0.0`.
+- Default value of `srid` parameter is `0`.
+
+```php
+use TarfinLabs\LaravelSpatial\Types\Point;
+
+$location = new Point(lat: 28.123456, lng: 39.123456, srid: 4326);
+
+$location->getLat(); // 28.123456
+$location->getLng(); // 39.123456
+$locatipn->getSrid(); // 4326
+```
+
+You can override the default SRID via `latavel-spatial` config file. To do that you should publish config migration file using vendor:publish artisan command:
+
+```bash
+php artisan vendor:publish --provider="TarfinLabs\LaravelSpatial\LaravelSpatialServiceProvider"
+```
+
+Then change the value of `default_srid` in `config/laravel-spatial.php`
+```php 
+return [
+    'default_srid' => 4326,
+];
+```
+***
+### 4- Scopes:
+#### ***withinDistanceTo()***
 Filter addresses within 10 km of the given coordinate:
 
 ```php
@@ -89,7 +142,8 @@ Address::query()
        ->get();
 ```
 
-Select distance to given coordinate as meter:
+#### ***selectDistanceTo()***
+Select distance to given coordinates as meter:
 
 ```php
 use TarfinLabs\LaravelSpatial\Types\Point;
@@ -97,6 +151,24 @@ use App\Models\Address;
 
 Address::query()
        ->selectDistanceTo('location', new Point(lat: 25.45634, lng: 35.54331))
+       ->get();
+```
+
+#### ***orderByDistanceTo()***
+Order data by distance to given coordinates:
+
+```php
+use TarfinLabs\LaravelSpatial\Types\Point;
+use App\Models\Address;
+
+// ASC
+Address::query()
+       ->orderByDistanceTo('location', new Point(lat: 25.45634, lng: 35.54331))
+       ->get();
+
+// DESC
+Address::query()
+       ->orderByDistanceTo('location', new Point(lat: 25.45634, lng: 35.54331), 'desc')
        ->get();
 ```
 
@@ -124,7 +196,6 @@ Address::create([
 ]);
 ```
 
-
 ### Testing
 
 ```bash
@@ -132,8 +203,12 @@ composer test
 ```
 
 ### Todo
-- Proper documentation.
-- Missing tests.
+- MultiPoint
+- LineString
+- MultiLineString
+- Polygon
+- MultiPolygon
+- GeometryCollection
 
 ### Changelog
 
@@ -155,7 +230,3 @@ If you discover any security related issues, please email development@tarfin.com
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
-
-## Laravel Package Boilerplate
-
-This package was generated using the [Laravel Package Boilerplate](https://laravelpackageboilerplate.com).
