@@ -22,7 +22,7 @@ class HasSpatialTest extends TestCase
 
         // Assert
         $this->assertEquals(
-            expected: "select *, CONCAT(ST_AsText(addresses.$castedAttr), ',', ST_SRID(addresses.$castedAttr)) as $castedAttr, ST_Distance(
+            expected: "select *, CONCAT(ST_AsText(addresses.$castedAttr, 'axis-order=long-lat'), ',', ST_SRID(addresses.$castedAttr)) as $castedAttr, ST_Distance(
             ST_SRID($castedAttr, ?),
             ST_SRID(Point(?, ?), ?)
         ) as distance from `addresses`",
@@ -45,7 +45,7 @@ class HasSpatialTest extends TestCase
 
         // 3. Assert
         $this->assertEquals(
-            expected: "select *, CONCAT(ST_AsText(addresses.$castedAttr), ',', ST_SRID(addresses.$castedAttr)) as $castedAttr from `addresses` where ST_Distance(
+            expected: "select *, CONCAT(ST_AsText(addresses.$castedAttr, 'axis-order=long-lat'), ',', ST_SRID(addresses.$castedAttr)) as $castedAttr from `addresses` where ST_Distance(
             ST_SRID($castedAttr, ?),
             ST_SRID(Point(?, ?), ?)
         ) <= ?",
@@ -69,7 +69,7 @@ class HasSpatialTest extends TestCase
 
         // 3. Assert
         $this->assertEquals(
-            expected: "select *, CONCAT(ST_AsText(addresses.$castedAttr), ',', ST_SRID(addresses.$castedAttr)) as $castedAttr from `addresses` order by ST_Distance(
+            expected: "select *, CONCAT(ST_AsText(addresses.$castedAttr, 'axis-order=long-lat'), ',', ST_SRID(addresses.$castedAttr)) as $castedAttr from `addresses` order by ST_Distance(
             ST_SRID($castedAttr, ?),
             ST_SRID(Point(?, ?), ?)
         ) asc",
@@ -77,7 +77,7 @@ class HasSpatialTest extends TestCase
         );
 
         $this->assertEquals(
-            expected: "select *, CONCAT(ST_AsText(addresses.$castedAttr), ',', ST_SRID(addresses.$castedAttr)) as $castedAttr from `addresses` order by ST_Distance(
+            expected: "select *, CONCAT(ST_AsText(addresses.$castedAttr, 'axis-order=long-lat'), ',', ST_SRID(addresses.$castedAttr)) as $castedAttr from `addresses` order by ST_Distance(
             ST_SRID($castedAttr, ?),
             ST_SRID(Point(?, ?), ?)
         ) desc",
@@ -97,7 +97,7 @@ class HasSpatialTest extends TestCase
 
         // 2. Act & Assert
         $this->assertEquals(
-            expected: "select *, CONCAT(ST_AsText(addresses.$castedAttr), ',', ST_SRID(addresses.$castedAttr)) as $castedAttr from `addresses`",
+            expected: "select *, CONCAT(ST_AsText(addresses.$castedAttr, 'axis-order=long-lat'), ',', ST_SRID(addresses.$castedAttr)) as $castedAttr from `addresses`",
             actual: $address->query()->toSql()
         );
     }
