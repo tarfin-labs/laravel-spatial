@@ -34,6 +34,10 @@ class LocationCast implements CastsAttributes, SerializesCastableAttributes
             throw new Exception(message: 'The '.$key.' field must be instance of '.Point::class);
         }
 
+        if ($value->getSrid() > 0) {
+            return DB::raw(value: "ST_GeomFromText('POINT({$value->getLng()} {$value->getLat()})', {$value->getSrid()})");
+        }
+
         return DB::raw(value: "ST_GeomFromText('POINT({$value->getLng()} {$value->getLat()})')");
     }
 
