@@ -4,9 +4,9 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/tarfin-labs/laravel-spatial.svg?style=flat-square)](https://packagist.org/packages/tarfin-labs/laravel-spatial)
 ![GitHub Actions](https://github.com/tarfin-labs/laravel-spatial/actions/workflows/main.yml/badge.svg)
 
-Laravel package to work with geospatial data types and functions.
+This is a Laravel package to work with geospatial data types and functions.
 
-For now, it supports only MySql Spatial Data Types and Functions.
+It supports only MySQL Spatial Data Types and Functions, other RDBMS is on the roadmap.
 
 **Supported data types:**
 - `Point`
@@ -57,18 +57,22 @@ return new class extends SpatialMigration {
 
 The migration above creates an `addresses` table with a `location` spatial column.
 
->Spatial columns with no SRID attribute are not SRID-restricted and accept values with any SRID. However, the optimizer cannot use SPATIAL indexes on them until the column definition is modified to include an SRID attribute, which may require that the column contents first be modified so that all values have the same SRID.
+> Spatial columns with no SRID attribute are not SRID-restricted and accept values with any SRID. However, the optimizer cannot use SPATIAL indexes on them until the column definition is modified to include an SRID attribute, which may require that the column contents first be modified so that all values have the same SRID.
 
 So you should give an SRID attribute to use spatial indexes in the migrations:
+
 ```php
 Schema::create('addresses', function (Blueprint $table) {
-    $table->point('location', 4326);
+    $table->point(column: 'location', srid: 4326);
     
     $table->spatialIndex('location');
 })
 ```
+
 ***
+
 ### 2- Models:
+
 Fill the `$fillable`, `$casts` arrays in the model:
 
 ```php
@@ -95,6 +99,7 @@ class Address extends Model {
 ```
 
 ### 3- Spatial Data Types:
+
 #### ***Point:***
 `Point` represents the coordinates of a location and contains `latitude`, `longitude`, and `srid` properties.
 
@@ -116,13 +121,14 @@ $location->getLng(); // 39.123456
 $locatipn->getSrid(); // 4326
 ```
 
-You can override the default SRID via the `laravel-spatial` config file. To do that, you should publish the config migration file using vendor:publish artisan command:
+You can override the default SRID via the `laravel-spatial` config file. To do that, you should publish the config file using `vendor:publish` artisan command:
 
 ```bash
 php artisan vendor:publish --provider="TarfinLabs\LaravelSpatial\LaravelSpatialServiceProvider"
 ```
 
-Then change the value of `default_srid` in `config/laravel-spatial.php`
+After that, you can change the value of `default_srid` in `config/laravel-spatial.php`
+
 ```php 
 return [
     'default_srid' => 4326,
@@ -130,8 +136,12 @@ return [
 ```
 ***
 ### 4- Scopes:
+
 #### ***withinDistanceTo()***
-Filter addresses within 10 km of the given coordinate:
+
+You can use the `withinDistanceTo()` scope to filter locations by given distance:
+
+To filter addresses within the range of 10 km from the given coordinate:
 
 ```php
 use TarfinLabs\LaravelSpatial\Types\Point;
@@ -143,7 +153,8 @@ Address::query()
 ```
 
 #### ***selectDistanceTo()***
-Select distance to given coordinates as meter:
+
+You can get the distance between two points by using `selectDistanceTo()` scope. The distance will be in meters:
 
 ```php
 use TarfinLabs\LaravelSpatial\Types\Point;
@@ -155,7 +166,8 @@ Address::query()
 ```
 
 #### ***orderByDistanceTo()***
-Order data by distance to given coordinates:
+
+You can order your models by distance to given coordinates:
 
 ```php
 use TarfinLabs\LaravelSpatial\Types\Point;
@@ -172,7 +184,7 @@ Address::query()
        ->get();
 ```
 
-Get latitude and longitude of the location:
+#### Get latitude and longitude of the location:
 
 ```php
 use App\Models\Address;
@@ -184,7 +196,7 @@ $address->location->getLat();
 $address->location->getLng();
 ```
 
-Create a new address with location:
+#### Create a new address with location:
 
 ```php
 use App\Models\Address;
@@ -202,13 +214,13 @@ Address::create([
 composer test
 ```
 
-### Todo
-- MultiPoint
-- LineString
-- MultiLineString
-- Polygon
-- MultiPolygon
-- GeometryCollection
+### Road Map
+- [ ] MultiPoint
+- [ ] LineString
+- [ ] MultiLineString
+- [ ] Polygon
+- [ ] MultiPolygon
+- [ ] GeometryCollection
 
 ### Changelog
 
