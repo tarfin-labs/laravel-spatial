@@ -10,57 +10,65 @@ use TarfinLabs\LaravelSpatial\Types\Point;
 
 class LocationCastTest extends TestCase
 {
-    public function test_setting_location_to_a_non_point_value(): void
+    /** @test */
+    public function it_throws_an_exception_if_casted_attribute_set_to_a_non_point_value(): void
     {
-        // Arrange
+        // 1. Arrange
         $address = new Address();
 
+        // 3. Expect
         $this->expectException(Exception::class);
 
-        // Act
+        // 2. Act
         $address->location = 'dummy';
     }
 
-    public function test_setting_location_to_a_point(): void
+    /** @test */
+    public function it_can_set_the_casted_attribute_to_a_point(): void
     {
+        // 1. Arrange
         $address = new Address();
         $point = new Point(27.1234, 39.1234);
 
         $cast = new LocationCast();
+
+        // 2. Act
         $response = $cast->set($address, 'location', $point, $address->getAttributes());
 
-        // Assert
+        // 3. Assert
         $this->assertEquals(DB::raw("ST_GeomFromText('POINT({$point->getLng()} {$point->getLat()})')"), $response);
     }
 
-    public function test_getting_location(): void
+    /** @test */
+    public function it_can_get_a_casted_attribute(): void
     {
-        // Arrange
+        // 1. Arrange
         $address = new Address();
         $point = new Point(27.1234, 39.1234);
 
-        // Act
+        // 2. Act
         $address->location = $point;
         $address->save();
 
-        // Assert
+        // 3. Assert
         $this->assertInstanceOf(Point::class, $address->location);
         $this->assertEquals($point->getLat(), $address->location->getLat());
         $this->assertEquals($point->getLng(), $address->location->getLng());
         $this->assertEquals($point->getSrid(), $address->location->getSrid());
     }
 
-    public function test_serialize_location(): void
+    /** @test */
+    public function it_can_serialize_a_casted_attribute(): void
     {
-        // Arrange
+        // 1. Arrange
         $address = new Address();
         $point = new Point(27.1234, 39.1234);
 
-        // Act
+        // 2. Act
         $address->location = $point;
         $address->save();
 
-        // Assert
+        // 3. Assert
         $array = $address->toArray();
         $this->assertIsArray($array);
         $this->assertArrayHasKey('location', $array);

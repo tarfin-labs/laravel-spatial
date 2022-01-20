@@ -2,13 +2,16 @@
 
 namespace TarfinLabs\LaravelSpatial\Tests;
 
-use Illuminate\Support\Collection;
 use TarfinLabs\LaravelSpatial\Tests\TestModels\Address;
 use TarfinLabs\LaravelSpatial\Types\Point;
 
 class HasSpatialTest extends TestCase
 {
-    public function test_scopeSelectDistanceTo(): void
+    /**
+     * @test
+     * @see
+     */
+    public function it_generates_sql_query_for_selectDistanceTo_scope(): void
     {
         // Arrange
         $address = new Address();
@@ -18,58 +21,85 @@ class HasSpatialTest extends TestCase
         $query = $address->selectDistanceTo($castedAttr, new Point());
 
         // Assert
-        $this->assertEquals("select *, CONCAT(ST_AsText(addresses.{$castedAttr}), ',', ST_SRID(addresses.{$castedAttr})) as {$castedAttr}, ST_Distance(
-            ST_SRID({$castedAttr}, ?),
+        $this->assertEquals(
+            expected: "select *, CONCAT(ST_AsText(addresses.$castedAttr), ',', ST_SRID(addresses.$castedAttr)) as $castedAttr, ST_Distance(
+            ST_SRID($castedAttr, ?),
             ST_SRID(Point(?, ?), ?)
-        ) as distance from `addresses`", $query->toSql());
+        ) as distance from `addresses`",
+            actual: $query->toSql()
+        );
     }
 
-    public function test_scopeWithinDistanceTo(): void
+    /**
+     * @test
+     * @see
+     */
+    public function it_generates_sql_query_for_withinDistanceTo_scope(): void
     {
-        // Arrange
+        // 1. Arrange
         $address = new Address();
         $castedAttr = $address->getLocationCastedAttributes()->first();
 
-        // Act
+        // 2. Act
         $query = $address->withinDistanceTo($castedAttr, new Point(), 10000);
 
-        // Assert
-        $this->assertEquals("select *, CONCAT(ST_AsText(addresses.{$castedAttr}), ',', ST_SRID(addresses.{$castedAttr})) as {$castedAttr} from `addresses` where ST_Distance(
-            ST_SRID({$castedAttr}, ?),
+        // 3. Assert
+        $this->assertEquals(
+            expected: "select *, CONCAT(ST_AsText(addresses.$castedAttr), ',', ST_SRID(addresses.$castedAttr)) as $castedAttr from `addresses` where ST_Distance(
+            ST_SRID($castedAttr, ?),
             ST_SRID(Point(?, ?), ?)
-        ) <= ?", $query->toSql());
+        ) <= ?",
+            actual: $query->toSql()
+        );
     }
 
-    public function test_scopeOrderByDistanceTo(): void
+    /**
+     * @test
+     * @see
+     */
+    public function it_generates_sql_query_for_orderByDistanceTo_scope(): void
     {
-        // Arrange
+        // 1. Arrange
         $address = new Address();
         $castedAttr = $address->getLocationCastedAttributes()->first();
 
-        // Act
+        // 2. Act
         $queryForAsc = $address->orderByDistanceTo($castedAttr, new Point());
         $queryForDesc = $address->orderByDistanceTo($castedAttr, new Point(), 'desc');
 
-        // Assert
-        $this->assertEquals("select *, CONCAT(ST_AsText(addresses.{$castedAttr}), ',', ST_SRID(addresses.{$castedAttr})) as {$castedAttr} from `addresses` order by ST_Distance(
-            ST_SRID({$castedAttr}, ?),
+        // 3. Assert
+        $this->assertEquals(
+            expected: "select *, CONCAT(ST_AsText(addresses.$castedAttr), ',', ST_SRID(addresses.$castedAttr)) as $castedAttr from `addresses` order by ST_Distance(
+            ST_SRID($castedAttr, ?),
             ST_SRID(Point(?, ?), ?)
-        ) asc", $queryForAsc->toSql());
+        ) asc",
+            actual: $queryForAsc->toSql()
+        );
 
-        $this->assertEquals("select *, CONCAT(ST_AsText(addresses.{$castedAttr}), ',', ST_SRID(addresses.{$castedAttr})) as {$castedAttr} from `addresses` order by ST_Distance(
-            ST_SRID({$castedAttr}, ?),
+        $this->assertEquals(
+            expected: "select *, CONCAT(ST_AsText(addresses.$castedAttr), ',', ST_SRID(addresses.$castedAttr)) as $castedAttr from `addresses` order by ST_Distance(
+            ST_SRID($castedAttr, ?),
             ST_SRID(Point(?, ?), ?)
-        ) desc", $queryForDesc->toSql());
+        ) desc",
+            actual: $queryForDesc->toSql()
+        );
     }
 
-    public function test_newQuery(): void
+    /**
+     * @test
+     * @see
+     */
+    public function it_generates_sql_query_for_location_casted_attributes(): void
     {
-        // Arrange
+        // 1. Arrange
         $address = new Address();
         $castedAttr = $address->getLocationCastedAttributes()->first();
 
-        // Assert
-        $this->assertEquals("select *, CONCAT(ST_AsText(addresses.{$castedAttr}), ',', ST_SRID(addresses.{$castedAttr})) as {$castedAttr} from `addresses`", $address->query()->toSql());
+        // 2. Act & Assert
+        $this->assertEquals(
+            expected: "select *, CONCAT(ST_AsText(addresses.$castedAttr), ',', ST_SRID(addresses.$castedAttr)) as $castedAttr from `addresses`",
+            actual: $address->query()->toSql()
+        );
     }
 
     /**
@@ -78,14 +108,13 @@ class HasSpatialTest extends TestCase
      */
     public function it_returns_location_casted_attributes(): void
     {
-        // Arrange
+        // 1. Arrange
         $address = new Address();
 
-        // Act
+        // 2. Act
         $locationCastedAttributres = $address->getLocationCastedAttributes();
 
-        // Assert
-        $this->assertInstanceOf(Collection::class, $locationCastedAttributres);
+        // 3. Assert
         $this->assertEquals(collect(['location']), $locationCastedAttributres);
     }
 }
