@@ -40,6 +40,22 @@ class LocationCastTest extends TestCase
     }
 
     /** @test */
+    public function it_can_set_the_casted_attribute_to_a_point_with_srid(): void
+    {
+        // 1. Arrange
+        $address = new Address();
+        $point = new Point(27.1234, 39.1234, 4326);
+
+        $cast = new LocationCast();
+
+        // 2. Act
+        $response = $cast->set($address, 'location', $point, $address->getAttributes());
+
+        // 3. Assert
+        $this->assertEquals(DB::raw("ST_GeomFromText('POINT({$point->getLng()} {$point->getLat()})', {$point->getSrid()}, 'axis-order=long-lat')"), $response);
+    }
+
+    /** @test */
     public function it_can_get_a_casted_attribute(): void
     {
         // 1. Arrange

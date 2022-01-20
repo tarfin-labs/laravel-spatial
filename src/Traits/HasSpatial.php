@@ -62,7 +62,7 @@ trait HasSpatial
         $raw = '';
 
         foreach ($this->getLocationCastedAttributes() as $column) {
-            $raw .= "CONCAT(ST_AsText({$this->getTable()}.{$column}), ',', ST_SRID({$this->getTable()}.{$column})) as {$column}, ";
+            $raw .= "CONCAT(ST_AsText({$this->getTable()}.{$column}, 'axis-order=long-lat'), ',', ST_SRID({$this->getTable()}.{$column})) as {$column}, ";
         }
 
         $raw = substr($raw, 0, -2);
