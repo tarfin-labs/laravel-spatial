@@ -57,7 +57,7 @@ trait HasSpatial
         ]);
     }
 
-    public function newQuery(bool $excludeDeleted = true): Builder
+    public function newQuery(): Builder
     {
         $raw = '';
 
@@ -67,7 +67,7 @@ trait HasSpatial
 
         $raw = substr($raw, 0, -2);
 
-        return parent::newQuery($excludeDeleted)->addSelect('*', DB::raw($raw));
+        return parent::newQuery()->addSelect('*', DB::raw($raw));
     }
 
     public function getLocationCastedAttributes(): Collection
