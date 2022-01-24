@@ -4,22 +4,18 @@ declare(strict_types=1);
 
 namespace TarfinLabs\LaravelSpatial\Types;
 
-class Point
+class Point extends Geometry
 {
     protected float $lat;
 
     protected float $lng;
 
-    protected int $srid;
-
     public function __construct(float $lat = 0, float $lng = 0, ?int $srid = null)
     {
+        parent::__construct($srid);
+
         $this->lat = $lat;
         $this->lng = $lng;
-
-        $this->srid = is_null($srid)
-            ? config('laravel-spatial.default_srid') ?? 0
-            : $srid;
     }
 
     public function getLat(): float
@@ -32,8 +28,13 @@ class Point
         return $this->lng;
     }
 
-    public function getSrid(): int
+    public function getWkt(): string
     {
-        return $this->srid;
+        return sprintf('POINT(%s)', "{$this->getLng()} {$this->getLat()}");
+    }
+
+    public function getPair(): string
+    {
+        return "{$this->getLng()} {$this->getLat()}";
     }
 }
