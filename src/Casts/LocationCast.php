@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace TarfinLabs\LaravelSpatial\Casts;
 
-use Exception;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Contracts\Database\Eloquent\SerializesCastableAttributes;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 use TarfinLabs\LaravelSpatial\Types\Point;
 
 class LocationCast implements CastsAttributes, SerializesCastableAttributes
@@ -31,16 +31,19 @@ class LocationCast implements CastsAttributes, SerializesCastableAttributes
     public function set($model, string $key, $value, array $attributes): Expression
     {
         if (!$value instanceof Point) {
-            throw new Exception(message: 'The '.$key.' field must be instance of '.Point::class);
+            throw new InvalidArgumentException(sprintf(
+                'The %s field must be instance of %s',
+                $key, Point::class
+            ));
         }
 
         if ($value->getSrid() > 0) {
             return DB::raw(
-                value: "ST_GeomFromText('POINT({$value->getLng()} {$value->getLat()})', {$value->getSrid()}, 'axis-order=long-lat')"
+                value: "ST_GeomFromText('{$value->getWkt()}', {$value->getSrid()}, 'axis-order=long-lat')"
             );
         }
 
-        return DB::raw(value: "ST_GeomFromText('POINT({$value->getLng()} {$value->getLat()})')");
+        return DB::raw(value: "ST_GeomFromText('{$value->getWkt()}')");
     }
 
     public function serialize($model, string $key, $value, array $attributes): array
