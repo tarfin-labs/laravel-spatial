@@ -2,6 +2,8 @@
 
 namespace TarfinLabs\LaravelSpatial\Tests;
 
+use TarfinLabs\LaravelSpatial\Casts\LineStringCast;
+use TarfinLabs\LaravelSpatial\Casts\LocationCast;
 use TarfinLabs\LaravelSpatial\Tests\TestModels\Address;
 use TarfinLabs\LaravelSpatial\Types\Point;
 
@@ -15,7 +17,9 @@ class HasSpatialTest extends TestCase
     {
         // Arrange
         $address = new Address();
-        $castedAttr = $address->getLocationCastedAttributes()->first();
+        $address->casts = ['location' => LocationCast::class];
+
+        $castedAttr = $address->getGeometryCastedAttributes()->first();
 
         // Act
         $query = $address->selectDistanceTo($castedAttr, new Point());
@@ -38,7 +42,8 @@ class HasSpatialTest extends TestCase
     {
         // 1. Arrange
         $address = new Address();
-        $castedAttr = $address->getLocationCastedAttributes()->first();
+        $address->casts = ['location' => LocationCast::class];
+        $castedAttr = $address->getGeometryCastedAttributes()->first();
 
         // 2. Act
         $query = $address->withinDistanceTo($castedAttr, new Point(), 10000);
@@ -61,7 +66,8 @@ class HasSpatialTest extends TestCase
     {
         // 1. Arrange
         $address = new Address();
-        $castedAttr = $address->getLocationCastedAttributes()->first();
+        $address->casts = ['location' => LocationCast::class];
+        $castedAttr = $address->getGeometryCastedAttributes()->first();
 
         // 2. Act
         $queryForAsc = $address->orderByDistanceTo($castedAttr, new Point());
@@ -93,12 +99,31 @@ class HasSpatialTest extends TestCase
     {
         // 1. Arrange
         $address = new Address();
-        $castedAttr = $address->getLocationCastedAttributes()->first();
+        $address->casts = ['location' => LocationCast::class];
+        $castedAttr = $address->getGeometryCastedAttributes()->first();
 
         // 2. Act & Assert
         $this->assertEquals(
             expected: "select *, CONCAT(ST_AsText(addresses.$castedAttr, 'axis-order=long-lat'), ',', ST_SRID(addresses.$castedAttr)) as $castedAttr from `addresses`",
-            actual: $address->query()->toSql()
+            actual: $address->newQuery()->toSql()
+        );
+    }
+
+    /**
+     * @test
+     * @see
+     */
+    public function it_generates_sql_query_for_linestring_casted_attributes(): void
+    {
+        // 1. Arrange
+        $address = new Address();
+        $address->casts = ['line_string' => LineStringCast::class];
+        $castedAttr = $address->getGeometryCastedAttributes()->first();
+
+        // 2. Act & Assert
+        $this->assertEquals(
+            expected: "select *, CONCAT(ST_AsText(addresses.$castedAttr, 'axis-order=long-lat'), ',', ST_SRID(addresses.$castedAttr)) as $castedAttr from `addresses`",
+            actual: $address->newQuery()->toSql()
         );
     }
 
@@ -112,9 +137,9 @@ class HasSpatialTest extends TestCase
         $address = new Address();
 
         // 2. Act
-        $locationCastedAttributres = $address->getLocationCastedAttributes();
+        $locationCastedAttributres = $address->getGeometryCastedAttributes();
 
         // 3. Assert
-        $this->assertEquals(collect(['location']), $locationCastedAttributres);
+        $this->assertEquals(collect(['location', 'line_string']), $locationCastedAttributres);
     }
 }

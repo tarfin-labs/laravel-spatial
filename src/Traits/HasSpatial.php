@@ -7,6 +7,7 @@ namespace TarfinLabs\LaravelSpatial\Traits;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use TarfinLabs\LaravelSpatial\Casts\LineStringCast;
 use TarfinLabs\LaravelSpatial\Casts\LocationCast;
 use TarfinLabs\LaravelSpatial\Types\Point;
 
@@ -61,7 +62,7 @@ trait HasSpatial
     {
         $raw = '';
 
-        foreach ($this->getLocationCastedAttributes() as $column) {
+        foreach ($this->getGeometryCastedAttributes() as $column) {
             $raw .= "CONCAT(ST_AsText({$this->getTable()}.{$column}, 'axis-order=long-lat'), ',', ST_SRID({$this->getTable()}.{$column})) as {$column}, ";
         }
 
@@ -70,8 +71,13 @@ trait HasSpatial
         return parent::newQuery()->addSelect('*', DB::raw($raw));
     }
 
-    public function getLocationCastedAttributes(): Collection
+    public function getGeometryCastedAttributes(): Collection
     {
-        return collect($this->getCasts())->filter(fn ($cast) => $cast === LocationCast::class)->keys();
+        return collect($this->getCasts())->filter(function ($cast) {
+            return in_array($cast, [
+                LocationCast::class,
+                LineStringCast::class,
+            ]);
+        })->keys();
     }
 }
