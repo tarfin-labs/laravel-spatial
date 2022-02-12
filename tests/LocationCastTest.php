@@ -16,10 +16,10 @@ class LocationCastTest extends TestCase
         // 1. Arrange
         $address = new Address();
 
-        // 3. Expect
+        // 2. Expect
         $this->expectException(Exception::class);
 
-        // 2. Act
+        // 3. Act
         $address->location = 'dummy';
     }
 
@@ -36,7 +36,7 @@ class LocationCastTest extends TestCase
         $response = $cast->set($address, 'location', $point, $address->getAttributes());
 
         // 3. Assert
-        $this->assertEquals(DB::raw("ST_GeomFromText('POINT({$point->getLng()} {$point->getLat()})')"), $response);
+        $this->assertEquals(DB::raw("ST_GeomFromText('{$point->toWkt()}')"), $response);
     }
 
     /** @test */
@@ -52,7 +52,7 @@ class LocationCastTest extends TestCase
         $response = $cast->set($address, 'location', $point, $address->getAttributes());
 
         // 3. Assert
-        $this->assertEquals(DB::raw("ST_GeomFromText('POINT({$point->getLng()} {$point->getLat()})', {$point->getSrid()}, 'axis-order=long-lat')"), $response);
+        $this->assertEquals(DB::raw("ST_GeomFromText('{$point->toWkt()}', {$point->getSrid()}, 'axis-order=long-lat')"), $response);
     }
 
     /** @test */

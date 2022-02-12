@@ -18,43 +18,46 @@ trait HasSpatial
             $query->select('*');
         }
 
-        $query->selectRaw("ST_Distance(
-            ST_SRID({$column}, ?),
-            ST_SRID(Point(?, ?), ?)
-        ) as distance", [
-            $point->getSrid(),
-            $point->getLng(),
-            $point->getLat(),
-            $point->getSrid(),
-        ]);
+        $query->selectRaw(
+            "ST_Distance(ST_SRID({$column}, ?), ST_SRID(Point(?, ?), ?)) as distance",
+            [
+                $point->getSrid(),
+                $point->getLng(),
+                $point->getLat(),
+                $point->getSrid(),
+            ]
+        );
     }
 
     public function scopeWithinDistanceTo(Builder $query, string $column, Point $point, int $distance): void
     {
-        $query->whereRaw("ST_Distance(
-            ST_SRID({$column}, ?),
-            ST_SRID(Point(?, ?), ?)
-        ) <= ?", [...[
-            $point->getSrid(),
-            $point->getLng(),
-            $point->getLat(),
-            $point->getSrid(),
-        ], $distance]);
+        $query->whereRaw(
+            "ST_Distance(ST_SRID({$column}, ?), ST_SRID(Point(?, ?), ?)) <= ?",
+            [
+                ...[
+                    $point->getSrid(),
+                    $point->getLng(),
+                    $point->getLat(),
+                    $point->getSrid(),
+                ],
+                $distance,
+            ]
+        );
     }
 
     public function scopeOrderByDistanceTo(Builder $query, string $column, Point $point, string $direction = 'asc'): void
     {
         $direction = strtolower($direction) === 'asc' ? 'asc' : 'desc';
 
-        $query->orderByRaw("ST_Distance(
-            ST_SRID({$column}, ?),
-            ST_SRID(Point(?, ?), ?)
-        ) ".$direction, [
-            $point->getSrid(),
-            $point->getLng(),
-            $point->getLat(),
-            $point->getSrid(),
-        ]);
+        $query->orderByRaw(
+            "ST_Distance(ST_SRID({$column}, ?), ST_SRID(Point(?, ?), ?)) " . $direction,
+            [
+                $point->getSrid(),
+                $point->getLng(),
+                $point->getLat(),
+                $point->getSrid(),
+            ]
+        );
     }
 
     public function newQuery(): Builder
