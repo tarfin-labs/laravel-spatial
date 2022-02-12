@@ -13,7 +13,7 @@ abstract class Geometry
             : $srid;
     }
 
-    abstract public function getWkt(): string;
+    abstract public function toWkt(): string;
 
     public function getSrid(): int
     {

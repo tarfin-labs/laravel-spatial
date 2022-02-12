@@ -28,7 +28,7 @@ class Point extends Geometry
         return $this->lng;
     }
 
-    public function getWkt(): string
+    public function toWkt(): string
     {
         return sprintf('POINT(%s)', "{$this->getLng()} {$this->getLat()}");
     }

@@ -52,4 +52,17 @@ class PointTest extends TestCase
         $this->assertSame(expected: 0.0, actual: $point->getLng());
         $this->assertSame(expected: 4326, actual: $point->getSrid());
     }
+
+    /** @test */
+    public function it_returns_point_as_wkt(): void
+    {
+        // 1. Arrange
+        $point = new Point(25.1515, 36.1212, 4326);
+
+        // 2. Act
+        $wkt = $point->toWkt();
+
+        // 3. Assert
+        $this->assertSame("POINT({$point->getLng()} {$point->getLat()})", $wkt);
+    }
 }

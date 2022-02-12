@@ -16,10 +16,10 @@ class LocationCastTest extends TestCase
         // 1. Arrange
         $address = new Address();
 
-        // 3. Expect
+        // 2. Expect
         $this->expectException(Exception::class);
 
-        // 2. Act
+        // 3. Act
         $address->location = 'dummy';
     }
 
