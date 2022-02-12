@@ -30,10 +30,10 @@ class Point extends Geometry
 
     public function toWkt(): string
     {
-        return sprintf('POINT(%s)', "{$this->getLng()} {$this->getLat()}");
+        return sprintf('POINT(%s)', $this->toPair());
     }
 
-    public function getPair(): string
+    public function toPair(): string
     {
         return "{$this->getLng()} {$this->getLat()}";
     }

@@ -65,4 +65,17 @@ class PointTest extends TestCase
         // 3. Assert
         $this->assertSame("POINT({$point->getLng()} {$point->getLat()})", $wkt);
     }
+
+    /** @test */
+    public function it_returns_point_as_pair(): void
+    {
+        // 1. Arrange
+        $point = new Point(25.1515, 36.1212, 4326);
+
+        // 2. Act
+        $pair = $point->toPair();
+
+        // 3. Assert
+        $this->assertSame("{$point->getLng()} {$point->getLat()}", $pair);
+    }
 }
