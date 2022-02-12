@@ -2,7 +2,7 @@
 
 namespace TarfinLabs\LaravelSpatial\Tests;
 
-use Exception;
+use InvalidArgumentException;
 use Illuminate\Support\Facades\DB;
 use TarfinLabs\LaravelSpatial\Casts\LocationCast;
 use TarfinLabs\LaravelSpatial\Tests\TestModels\Address;
@@ -17,7 +17,7 @@ class LocationCastTest extends TestCase
         $address = new Address();
 
         // 2. Expect
-        $this->expectException(Exception::class);
+        $this->expectException(InvalidArgumentException::class);
 
         // 3. Act
         $address->location = 'dummy';
