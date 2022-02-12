@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TarfinLabs\LaravelSpatial\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;

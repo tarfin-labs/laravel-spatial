@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TarfinLabs\LaravelSpatial\Tests;
 
 use TarfinLabs\LaravelSpatial\Casts\LineStringCast;

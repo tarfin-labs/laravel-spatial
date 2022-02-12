@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TarfinLabs\LaravelSpatial\Types;
 
 abstract class Geometry

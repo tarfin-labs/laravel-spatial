@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TarfinLabs\LaravelSpatial\Tests;
 
 use Exception;
@@ -82,7 +84,6 @@ class LineStringCastTest extends TestCase
         $lineString = new LineString($points, 4326);
 
         // 2. Act
-        $address->location = new Point();
         $address->line_string = $lineString;
         $address->save();
 
@@ -106,7 +107,6 @@ class LineStringCastTest extends TestCase
         $lineString = new LineString($points, 4326);
 
         // 2. Act
-        $address->location = new Point();
         $address->line_string = $lineString;
         $address->save();
 

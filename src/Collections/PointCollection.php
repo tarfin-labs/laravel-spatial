@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TarfinLabs\LaravelSpatial\Collections;
 
 use Illuminate\Support\Collection;
@@ -20,7 +22,7 @@ class PointCollection extends Collection
         $this->items[] = $point;
     }
 
-    private function validatePoints(array $points)
+    private function validatePoints(array $points): void
     {
         foreach ($points as $point) {
             if (!$point instanceof Point) {
