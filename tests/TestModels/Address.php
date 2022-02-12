@@ -6,8 +6,10 @@ namespace TarfinLabs\LaravelSpatial\Tests\TestModels;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use TarfinLabs\LaravelSpatial\Casts\LineStringCast;
 use TarfinLabs\LaravelSpatial\Casts\LocationCast;
 use TarfinLabs\LaravelSpatial\Traits\HasSpatial;
+use TarfinLabs\LaravelSpatial\Types\LineString;
 use TarfinLabs\LaravelSpatial\Types\Point;
 
 /**
@@ -18,6 +20,7 @@ use TarfinLabs\LaravelSpatial\Types\Point;
  * @method void withinDistanceTo(Builder $query, string $column, Point $point, int $distance)
  *
  * @property Point location
+ * @property LineString line_string
  */
 class Address extends Model
 {
@@ -25,9 +28,11 @@ class Address extends Model
 
     protected $fillable = [
         'location',
+        'line_string',
     ];
 
-    protected $casts = [
-        'location' => LocationCast::class,
+    public $casts = [
+        'location'      => LocationCast::class,
+        'line_string'   => LineStringCast::class,
     ];
 }
