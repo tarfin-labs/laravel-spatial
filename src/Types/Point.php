@@ -37,4 +37,13 @@ class Point extends Geometry
     {
         return "{$this->getLng()} {$this->getLat()}";
     }
+
+    public function toArray(): array
+    {
+        return [
+            'lat'   => $this->lat,
+            'lng'   => $this->lng,
+            'srid'  => $this->srid,
+        ];
+    }
 }

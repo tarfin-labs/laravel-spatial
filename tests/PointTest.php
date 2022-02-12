@@ -78,4 +78,23 @@ class PointTest extends TestCase
         // 3. Assert
         $this->assertSame("{$point->getLng()} {$point->getLat()}", $pair);
     }
+
+    /** @test */
+    public function it_returns_points_as_array(): void
+    {
+        // 1. Arrange
+        $point = new Point(25.1515, 36.1212, 4326);
+
+        // 2. Act
+        $array = $point->toArray();
+
+        $expected = [
+            'lat'   => $point->getLat(),
+            'lng'   => $point->getLng(),
+            'srid'  => $point->getSrid(),
+        ];
+
+        // 3. Assert
+        $this->assertSame($expected, $array);
+    }
 }

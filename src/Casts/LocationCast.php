@@ -48,10 +48,6 @@ class LocationCast implements CastsAttributes, SerializesCastableAttributes
 
     public function serialize($model, string $key, $value, array $attributes): array
     {
-        return [
-            'lat'  => $value->getLat(),
-            'lng'  => $value->getLng(),
-            'srid' => $value->getSrid(),
-        ];
+        return $value->toArray();
     }
 }
