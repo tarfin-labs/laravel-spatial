@@ -13,8 +13,12 @@ use TarfinLabs\LaravelSpatial\Types\Point;
 
 class LocationCast implements CastsAttributes, SerializesCastableAttributes
 {
-    public function get($model, string $key, $value, array $attributes): Point
+    public function get($model, string $key, $value, array $attributes): ?Point
     {
+        if (is_null($value)) {
+            return null;
+        }
+
         $coordinates = explode(',', $value);
 
         if (count($coordinates) > 1) {
