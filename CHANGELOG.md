@@ -2,6 +2,9 @@
 
 All notable changes to `laravel-spatial` will be documented in this file
 
+## 1.2.0 - 2012-02-08
+- Laravel 9 support added.
+
 # 1.1.2 - 2022-03-08
 - Bug fixed for casting location columns that is null.
 
