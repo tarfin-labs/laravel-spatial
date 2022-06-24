@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
-            $table->point('location');
+            $table->point('location')->nullable();
             $table->timestamps();
         });
     }
