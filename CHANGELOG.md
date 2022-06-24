@@ -2,7 +2,12 @@
 
 All notable changes to `laravel-spatial` will be documented in this file
 
-## 1.2.0 - 2012-02-08
+## 1.3.0 - 2022-06-24
+- `toWkt()` method added to `Point` class for getting the coordinates as well known text.
+- `toPair()` method added to `Point` class for getting the coordinates as pair.
+- `toArray()` method added to `Point` class for getting the coordinates as array.
+
+## 1.2.0 - 2022-02-08
 - Laravel 9 support added.
 
 # 1.1.2 - 2022-03-08

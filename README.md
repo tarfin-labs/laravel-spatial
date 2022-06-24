@@ -208,6 +208,43 @@ Address::create([
 ]);
 ```
 
+#### Usage in Resource:
+To get an array form of the location casted field from the resource, you can return `parent::toArray($request)`.
+
+```php
+class LocationResource extends JsonResource
+{
+    public function toArray($request)
+    {
+        return parent::toArray($request);
+    }
+}
+```
+
+If you need to return a custom array from the resource, you can use the `toArray()` method of the `Point` object.
+
+```php
+class LocationResource extends JsonResource
+{
+    public function toArray($request)
+    {
+        return [
+            'location' => $this->location->toArray(),
+        ];
+    }
+}
+```
+
+Either way you will get the following output for the location casted field:
+
+```json
+{
+    "lat": 25.45634,
+    "lng": 35.54331,
+    "srid": 4326
+}
+```
+
 ### Testing
 
 ```bash
