@@ -36,4 +36,23 @@ class Point
     {
         return $this->srid;
     }
+
+    public function toWkt(): string
+    {
+        return sprintf('POINT(%s)', $this->toPair());
+    }
+
+    public function toPair(): string
+    {
+        return "{$this->getLng()} {$this->getLat()}";
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'lat'  => $this->lat,
+            'lng'  => $this->lng,
+            'srid' => $this->srid,
+        ];
+    }
 }
