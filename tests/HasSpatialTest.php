@@ -36,7 +36,7 @@ class HasSpatialTest extends TestCase
 
         // 3. Assert
         $this->assertEquals(
-            expected: "select *, CONCAT(ST_AsText(addresses.$castedAttr, 'axis-order=long-lat'), ',', ST_SRID(addresses.$castedAttr)) as $castedAttr from `addresses` where ST_Distance(ST_SRID($castedAttr, ?), ST_SRID(Point(?, ?), ?)) <= ?",
+            expected: "select *, CONCAT(ST_AsText(addresses.$castedAttr, 'axis-order=long-lat'), ',', ST_SRID(addresses.$castedAttr)) as $castedAttr from `addresses` where ST_AsText(location) != ? and ST_Distance(ST_SRID($castedAttr, ?), ST_SRID(Point(?, ?), ?)) <= ?",
             actual: $query->toSql()
         );
     }

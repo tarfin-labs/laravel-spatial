@@ -59,7 +59,7 @@ The migration above creates an `addresses` table with a `location` spatial colum
 
 > Spatial columns with no SRID attribute are not SRID-restricted and accept values with any SRID. However, the optimizer cannot use SPATIAL indexes on them until the column definition is modified to include an SRID attribute, which may require that the column contents first be modified so that all values have the same SRID.
 
-So you should give an SRID attribute to use spatial indexes in the migrations:
+So you should give an SRID attribute to use spatial indexes in the migrations and indexed columns must be NOT NULL:
 
 ```php
 Schema::create('addresses', function (Blueprint $table) {
