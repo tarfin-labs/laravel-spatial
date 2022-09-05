@@ -31,7 +31,11 @@ trait HasSpatial
 
     public function scopeWithinDistanceTo(Builder $query, string $column, Point $point, int $distance): void
     {
-        $query->whereRaw(
+        $query
+            ->whereRaw("ST_AsText({$column}) != ?", [
+                'POINT(0 0)',
+            ])
+            ->whereRaw(
             "ST_Distance(ST_SRID({$column}, ?), ST_SRID(Point(?, ?), ?)) <= ?",
             [
                 ...[

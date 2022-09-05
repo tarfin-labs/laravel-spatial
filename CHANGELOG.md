@@ -2,6 +2,9 @@
 
 All notable changes to `laravel-spatial` will be documented in this file
 
+## 1.4.0 - 2022-07-24
+- Locations that have zero points are excluded while getting the distance to a given location in `withingDistanceTo` scope.
+
 ## 1.3.0 - 2022-06-24
 - `toWkt()` method added to `Point` class for getting the coordinates as well known text.
 - `toPair()` method added to `Point` class for getting the coordinates as pair.
