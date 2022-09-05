@@ -18,8 +18,6 @@ class TestCase extends \Orchestra\Testbench\TestCase
             'driver'    => 'mysql',
             'host'      => '127.0.0.1',
             'port'      => env('DB_PORT', 3306),
-            'database'  => 'laravel_spatial_test',
-            'username'  => 'root',
         ]);
     }
 
