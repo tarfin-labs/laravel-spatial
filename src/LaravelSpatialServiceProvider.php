@@ -3,6 +3,7 @@
 namespace TarfinLabs\LaravelSpatial;
 
 use Doctrine\DBAL\Types\Type;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 use TarfinLabs\LaravelSpatial\Doctrine\Point;
 
@@ -37,6 +38,7 @@ class LaravelSpatialServiceProvider extends ServiceProvider
             foreach ($geometries as $type => $class) {
                 if (!in_array($type, $typeNames)) {
                     Type::addType($type, $class);
+                    DB::connection()->registerDoctrineType($class, $type, $type);
                 }
             }
         }

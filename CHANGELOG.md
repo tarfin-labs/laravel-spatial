@@ -2,6 +2,9 @@
 
 All notable changes to `laravel-spatial` will be documented in this file
 
+## 1.4.1 - 2022-09-05
+- Doctrtine unknown type error fixed.
+
 ## 1.4.0 - 2022-07-24
 - Locations that have zero points are excluded while getting the distance to a given location in `withingDistanceTo` scope.
 
