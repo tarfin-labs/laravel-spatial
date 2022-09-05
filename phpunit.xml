@@ -10,4 +10,8 @@
       <directory>tests</directory>
     </testsuite>
   </testsuites>
+  <php>
+    <env name="DB_USERNAME" value="root"/>
+    <env name="DB_DATABASE" value="laravel_spatial_test"/>
+  </php>
 </phpunit>
