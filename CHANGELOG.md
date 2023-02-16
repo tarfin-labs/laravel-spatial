@@ -2,6 +2,9 @@
 
 All notable changes to `laravel-spatial` will be documented in this file
 
+## 1.4.2 - 2023-02-16
+- Laravel 10 support added.
+
 ## 1.4.1 - 2022-09-05
 - Doctrtine unknown type error fixed.
 
