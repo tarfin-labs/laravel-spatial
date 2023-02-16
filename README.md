@@ -118,7 +118,7 @@ $location = new Point(lat: 28.123456, lng: 39.123456, srid: 4326);
 
 $location->getLat(); // 28.123456
 $location->getLng(); // 39.123456
-$locatipn->getSrid(); // 4326
+$location->getSrid(); // 4326
 ```
 
 You can override the default SRID via the `laravel-spatial` config file. To do that, you should publish the config file using `vendor:publish` artisan command:
