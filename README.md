@@ -69,6 +69,30 @@ Schema::create('addresses', function (Blueprint $table) {
 })
 ```
 
+#### Issue with adding a new location column with index to an existing table:
+When adding a new location column with an index in Laravel, it can be troublesome if you have existing data. One common mistake is trying to set a default value for the new column using `->default(new Point(0, 0, 4326))`. However, `POINT` columns cannot have a default value, which can cause issues when trying to add an index to the column, as indexed columns cannot be nullable.
+
+To solve this problem, it is recommended to perform a two-step migration like following:
+
+```php
+public function up()
+{
+    // Add the new location column as nullable
+    Schema::table('table', function (Blueprint $table) {
+        $table->point('location')->nullable();
+    });
+
+    // In the second go, set 0,0 values, make the column not null and finally add the spatial index
+    Schema::table('table', function (Blueprint $table) {
+        DB::statement("UPDATE `table` SET `location` = POINT(0,0);");
+
+        DB::statement("ALTER TABLE `table` CHANGE `location` `location` POINT NOT NULL;");
+
+        $table->spatialIndex('location');
+    });
+}
+```
+
 ***
 
 ### 2- Models:
