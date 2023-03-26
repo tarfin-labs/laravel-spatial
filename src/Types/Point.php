@@ -53,6 +53,11 @@ class Point
         return "{$this->getLng()} {$this->getLat()}";
     }
 
+    public function toGeomFromText(): string
+    {
+        return "ST_GeomFromText('{$this->toWkt()}', {$this->getSrid()}{$this->wktOptions})";
+    }
+
     public function toArray(): array
     {
         return [
