@@ -68,8 +68,12 @@ trait HasSpatial
     {
         $raw = '';
 
+        $wktOptions = config('laravel-spatial.wkt_options', true) === true
+            ? ', \'axis-order=long-lat\''
+            : '';
+
         foreach ($this->getLocationCastedAttributes() as $column) {
-            $raw .= "CONCAT(ST_AsText({$this->getTable()}.{$column}, 'axis-order=long-lat'), ',', ST_SRID({$this->getTable()}.{$column})) as {$column}, ";
+            $raw .= "CONCAT(ST_AsText({$this->getTable()}.{$column}$wktOptions), ',', ST_SRID({$this->getTable()}.{$column})) as {$column}, ";
         }
 
         $raw = substr($raw, 0, -2);

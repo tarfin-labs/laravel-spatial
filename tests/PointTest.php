@@ -79,6 +79,22 @@ class PointTest extends TestCase
         $this->assertSame("{$point->getLng()} {$point->getLat()}", $pair);
     }
 
+    /**
+     * @test
+     * @see
+     */
+    public function it_returns_points_as_geometry(): void
+    {
+        // 1. Arrange
+        $point = new Point(25.1515, 36.1212, 4326);
+
+        // 2. Act
+        $geometry = $point->toGeomFromText();
+
+        // 3. Assert
+        $this->assertSame("ST_GeomFromText('{$point->toWkt()}', {$point->getSrid()}, 'axis-order=long-lat')", $geometry);
+    }
+
     /** @test */
     public function it_returns_points_as_array(): void
     {

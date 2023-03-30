@@ -159,6 +159,39 @@ return [
 ];
 ```
 ***
+#### Configuring WKT options
+By default, this package uses the `longitude latitude` order for the coordinate values in the WKT format used by spatial functions. This is necessary for some versions of MySQL, which will interpret coordinate pairs as lat-long unless the `axis-order` option is explicitly set to `long-lat`.
+
+However, MariaDB reads WKT values as `long-lat` by default, and its spatial functions like `ST_GeomFromText` and `ST_DISTANCE` do not accept an `options` parameter like their MySQL counterparts. This means that using the package with MariaDB will result in a `Syntax error or access violation: 1582 Incorrect parameter count in the call to native function 'ST_GeomFromText'` exception.
+
+To address this issue, we have added a `with_wkt_options` parameter to the config file that can be used to override the default options. This property can be set to `false` to remove the options parameter entirely, which fixes the errors when using MariaDB.
+
+```php 
+return [
+    'with_wkt_options' => true,
+];
+```
+***
+#### Bulk Operations
+In order to insert or update several rows with spatial data in one query using the `upsert()` method in Laravel, the package requires a workaround solution to avoid the error `Object of class TarfinLabs\LaravelSpatial\Types\Point could not be converted to string`. 
+
+The solution is to use the `toGeomFromTextString()` method to convert the `Point` object to a WKT string, and then use `DB::raw()` to create a raw query string.
+
+Here's an example of how to use this workaround in your code:
+
+```php
+use TarfinLabs\LaravelSpatial\Types\Point;
+
+$points = [
+    ['external_id' => 5, 'location' => (new Point(50, 20))->toGeomFromTextString()],
+    ['external_id' => 7, 'location' => (new Point(60, 30))->toGeomFromTextString()],
+];
+
+Property::upsert($points, ['external_id'], ['location']);
+```
+
+
+***
 ### 4- Scopes:
 
 #### ***withinDistanceTo()***

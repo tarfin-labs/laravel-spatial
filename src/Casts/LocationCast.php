@@ -41,9 +41,7 @@ class LocationCast implements CastsAttributes, SerializesCastableAttributes
         }
 
         if ($value->getSrid() > 0) {
-            return DB::raw(
-                value: "ST_GeomFromText('{$value->toWkt()}', {$value->getSrid()}, 'axis-order=long-lat')"
-            );
+            return DB::raw($value->toGeomFromText());
         }
 
         return DB::raw(value: "ST_GeomFromText('{$value->toWkt()}')");
