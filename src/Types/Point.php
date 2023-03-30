@@ -12,6 +12,8 @@ class Point
 
     protected int $srid;
 
+    protected string $wktOptions;
+
     public function __construct(float $lat = 0, float $lng = 0, ?int $srid = null)
     {
         $this->lat = $lat;
@@ -20,6 +22,10 @@ class Point
         $this->srid = is_null($srid)
             ? config('laravel-spatial.default_srid') ?? 0
             : $srid;
+
+        $this->wktOptions = config('laravel-spatial.wkt_options', true) === true
+            ? ', \'axis-order=long-lat\''
+            : '';
     }
 
     public function getLat(): float
@@ -45,6 +51,11 @@ class Point
     public function toPair(): string
     {
         return "{$this->getLng()} {$this->getLat()}";
+    }
+
+    public function toGeomFromText(): string
+    {
+        return "ST_GeomFromText('{$this->toWkt()}', {$this->getSrid()}{$this->wktOptions})";
     }
 
     public function toArray(): array
