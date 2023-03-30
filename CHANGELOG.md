@@ -2,7 +2,7 @@
 
 All notable changes to `laravel-spatial` will be documented in this file
 
-## 1.5.0 - 2023-03-30
+## 1.6.0 - 2023-03-30
 - Added `MariaDB` support to spatial functions.
 - Readme updated for adding a location column with default value to an existing table.
 - `toGeomFromTextString()` method added to `Point` class for bulk insert/update operations.
