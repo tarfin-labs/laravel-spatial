@@ -23,7 +23,7 @@ class Point
             ? config('laravel-spatial.default_srid') ?? 0
             : $srid;
 
-        $this->wktOptions = config('laravel-spatial.wkt_options', true) === true
+        $this->wktOptions = config('laravel-spatial.with_wkt_options', true) === true
             ? ', \'axis-order=long-lat\''
             : '';
     }
