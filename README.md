@@ -183,8 +183,8 @@ Here's an example of how to use this workaround in your code:
 use TarfinLabs\LaravelSpatial\Types\Point;
 
 $points = [
-    ['external_id' => 5, 'location' => (new Point(50, 20))->toGeomFromText()],
-    ['external_id' => 7, 'location' => (new Point(60, 30))->toGeomFromText()],
+    ['external_id' => 5, 'location' => DB::raw((new Point(lat: 40.73, lng: -73.93))->toGeomFromText())],
+    ['external_id' => 7, 'location' => DB::raw((new Point(lat: -37.81, lng: 144.96))->toGeomFromText())],
 ];
 
 Property::upsert($points, ['external_id'], ['location']);
