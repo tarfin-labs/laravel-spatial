@@ -68,7 +68,7 @@ trait HasSpatial
     {
         $raw = '';
 
-        $wktOptions = config('laravel-spatial.wkt_options', true) === true
+        $wktOptions = config('laravel-spatial.with_wkt_options', true) === true
             ? ', \'axis-order=long-lat\''
             : '';
 
