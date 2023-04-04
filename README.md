@@ -175,7 +175,7 @@ return [
 #### Bulk Operations
 In order to insert or update several rows with spatial data in one query using the `upsert()` method in Laravel, the package requires a workaround solution to avoid the error `Object of class TarfinLabs\LaravelSpatial\Types\Point could not be converted to string`. 
 
-The solution is to use the `toGeomFromTextString()` method to convert the `Point` object to a WKT string, and then use `DB::raw()` to create a raw query string.
+The solution is to use the `toGeomFromText()` method to convert the `Point` object to a WKT string, and then use `DB::raw()` to create a raw query string.
 
 Here's an example of how to use this workaround in your code:
 
@@ -183,8 +183,8 @@ Here's an example of how to use this workaround in your code:
 use TarfinLabs\LaravelSpatial\Types\Point;
 
 $points = [
-    ['external_id' => 5, 'location' => (new Point(50, 20))->toGeomFromTextString()],
-    ['external_id' => 7, 'location' => (new Point(60, 30))->toGeomFromTextString()],
+    ['external_id' => 5, 'location' => DB::raw((new Point(lat: 40.73, lng: -73.93))->toGeomFromText())],
+    ['external_id' => 7, 'location' => DB::raw((new Point(lat: -37.81, lng: 144.96))->toGeomFromText())],
 ];
 
 Property::upsert($points, ['external_id'], ['location']);
