@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-spatial` will be documented in this file
 
+## 1.6.1 - 2023-04-04
+- Changed `toGeomFromTextString()` to `toGeomFromText()` in Readme.
+- Fixed `with_wkt_options` configuration.
+
 ## 1.6.0 - 2023-03-30
 - Added `MariaDB` support to spatial functions.
 - Readme updated for adding a location column with default value to an existing table.
