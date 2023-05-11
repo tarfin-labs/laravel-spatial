@@ -13,6 +13,8 @@ jobs:
                 exclude:
                     - php: '8.0'
                       laravel: 10
+                    - php: '8.2'
+                      laravel: 8
 
         name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
 
