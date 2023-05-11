@@ -8,16 +8,13 @@ jobs:
         strategy:
             fail-fast: true
             matrix:
-                php: [8.0, 8.1, 8.2]
-                laravel: [8.*, 9.*, 10.*]
-                stability: [prefer-lowest, prefer-stable]
-                include:
-                    - laravel: 10.*
-                      testbench: 8.*
-                    - laravel: 9.*
-                      testbench: 7.*
-                    - laravel: 8.*
-                      testbench: 6.*
+                php: ['8.0', 8.1, 8.2]
+                laravel: [8, 9, 10]
+                exclude:
+                    - php: '8.0'
+                      laravel: 10
+                    - php: '8.2'
+                      laravel: 8
 
         name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
 
@@ -40,10 +37,12 @@ jobs:
               with:
                   php-version: ${{ matrix.php }}
                   extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, mysql, mysqli, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
+                  ini-values: error_reporting=E_ALL
+                  tools: composer:v2
                   coverage: none
 
             - name: Install dependencies
-              run: composer install --no-progress --no-ansi --profile --no-interaction --no-scripts --prefer-dist
+              run: composer update --prefer-dist --no-interaction --no-progress
 
             - name: Start database server
               run: sudo /etc/init.d/mysql start
