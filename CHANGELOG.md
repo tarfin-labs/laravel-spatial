@@ -2,6 +2,9 @@
 
 All notable changes to `laravel-spatial` will be documented in this file
 
+## 1.7.0 - 2023-05-11
+- PHP 8.2 support added.
+
 ## 1.6.1 - 2023-04-04
 - Changed `toGeomFromTextString()` to `toGeomFromText()` in Readme.
 - Fixed `with_wkt_options` configuration.
