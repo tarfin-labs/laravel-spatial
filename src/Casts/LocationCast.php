@@ -17,6 +17,10 @@ class LocationCast implements CastsAttributes, SerializesCastableAttributes
     {
         if (is_null($value)) {
             return null;
+        }        
+        
+        if (gettype($value) !== "string") {
+            return null;
         }
 
         $coordinates = explode(',', $value);
