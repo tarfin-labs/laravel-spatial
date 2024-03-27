@@ -38,7 +38,6 @@ class LaravelSpatialServiceProvider extends ServiceProvider
             foreach ($geometries as $type => $class) {
                 if (!in_array($type, $typeNames)) {
                     Type::addType($type, $class);
-                    DB::connection()->registerDoctrineType($class, $type, $type);
                 }
             }
         }
