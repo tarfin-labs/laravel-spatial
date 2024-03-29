@@ -36,7 +36,7 @@ class LocationCastTest extends TestCase
         $response = $cast->set($address, 'location', $point, $address->getAttributes());
 
         // 3. Assert
-        $this->assertEquals(DB::raw("ST_GeomFromText('{$point->toWkt()}')"), $response);
+        $this->assertEquals(DB::raw("ST_GeomFromText('{$point->toWkt()}', 4326, 'axis-order=long-lat')"), $response);
     }
 
     /** @test */
