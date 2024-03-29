@@ -28,18 +28,5 @@ class LaravelSpatialServiceProvider extends ServiceProvider
     {
         // Automatically apply the package configuration
         $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'laravel-spatial');
-
-        if (class_exists(Type::class)) {
-            // Prevent geometry type fields from throwing a 'type not found' error when changing them
-            $geometries = [
-                'point' => Point::class,
-            ];
-            $typeNames = array_keys(Type::getTypesMap());
-            foreach ($geometries as $type => $class) {
-                if (!in_array($type, $typeNames)) {
-                    Type::addType($type, $class);
-                }
-            }
-        }
     }
 }
