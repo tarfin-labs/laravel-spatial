@@ -8,6 +8,13 @@ This is a Laravel package to work with geospatial data types and functions.
 
 It supports only MySQL Spatial Data Types and Functions, other RDBMS is on the roadmap.
 
+### Laravel Compatibility
+
+| Version | Supported Laravel Versions |
+|---------|----------------------------|
+| `2.x`   | `^11.0`                    |
+| `1.x`   | `^8.0, ^9.0, ^10.0`        |
+
 **Supported data types:**
 - `Point`
 
@@ -34,39 +41,22 @@ php artisan make:model Address --migration
 
 ### 1- Migrations:
 
-To add a spatial data field, you need to extend the migration from `TarfinLabs\LaravelSpatial\Migrations\SpatialMigration`.
-
-It is a simple abstract class that adds `point` spatial data type to Doctrine mapped types in the constructor.
 
 ```php
-use TarfinLabs\LaravelSpatial\Migrations\SpatialMigration;
+use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends SpatialMigration {
+return new class extends Migration {
     
     public function up(): void
     {
         Schema::create('addresses', function (Blueprint $table) {
-            $table->point('location');
+            $table->geography('location', 'point');
         })
     }
 
 }
-```
-
-The migration above creates an `addresses` table with a `location` spatial column.
-
-> Spatial columns with no SRID attribute are not SRID-restricted and accept values with any SRID. However, the optimizer cannot use SPATIAL indexes on them until the column definition is modified to include an SRID attribute, which may require that the column contents first be modified so that all values have the same SRID.
-
-So you should give an SRID attribute to use spatial indexes in the migrations and indexed columns must be NOT NULL:
-
-```php
-Schema::create('addresses', function (Blueprint $table) {
-    $table->point(column: 'location', srid: 4326);
-    
-    $table->spatialIndex('location');
-})
 ```
 
 #### Issue with adding a new location column with index to an existing table:
@@ -79,7 +69,7 @@ public function up()
 {
     // Add the new location column as nullable
     Schema::table('table', function (Blueprint $table) {
-        $table->point('location')->nullable();
+        $table->geography('location', 'point')->nullable();
     });
 
     // In the second go, set 0,0 values, make the column not null and finally add the spatial index
@@ -298,14 +288,6 @@ Either way, you will get the following output for the location casted field:
 composer test
 ```
 
-### Road Map
-- [ ] MultiPoint
-- [ ] LineString
-- [ ] MultiLineString
-- [ ] Polygon
-- [ ] MultiPolygon
-- [ ] GeometryCollection
-
 ### Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
@@ -326,3 +308,4 @@ If you discover any security related issues, please email development@tarfin.com
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+
