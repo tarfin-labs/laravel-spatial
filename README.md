@@ -81,7 +81,7 @@ Schema::create('addresses', function (Blueprint $table) {
 ```
 ### For Laravel 11 and Above Versions
 
-Some changes have been made. Here's how the code should be used for these versions:
+From Laravel 11 onwards, migrations are created as follows:
 
 ```php
 use Illuminate\Database\Migrations\Migration;
