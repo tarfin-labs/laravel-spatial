@@ -69,6 +69,7 @@ return new class extends SpatialMigration {
 The migration above creates an `addresses` table with a `location` spatial column.
 
 > Spatial columns with no SRID attribute are not SRID-restricted and accept values with any SRID. However, the optimizer cannot use SPATIAL indexes on them until the column definition is modified to include an SRID attribute, which may require that the column contents first be modified so that all values have the same SRID.
+
 So you should give an SRID attribute to use spatial indexes in the migrations and indexed columns must be NOT NULL:
 
 ```php
@@ -99,9 +100,6 @@ return new class extends Migration {
 }
 ```
 In Laravel 11, the methods **point**, **lineString**, **polygon**, **geometryCollection**, **multiPoint**, **multiLineString**, and **multiPolygon** have been removed. Therefore, we are updating to use the **geography** method instead. The `geography` method sets the default SRID value to 4326.
-
-
-
 
 #### Issue with adding a new location column with index to an existing table:
 When adding a new location column with an index in Laravel, it can be troublesome if you have existing data. One common mistake is trying to set a default value for the new column using `->default(new Point(0, 0, 4326))`. However, `POINT` columns cannot have a default value, which can cause issues when trying to add an index to the column, as indexed columns cannot be nullable.
