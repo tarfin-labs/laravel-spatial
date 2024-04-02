@@ -139,7 +139,7 @@ public function up()
 
     // In the second go, set 0,0 values, make the column not null and finally add the spatial index
     Schema::table('table', function (Blueprint $table) {
-        DB::statement("UPDATE `table` SET `location` = POINT(0,0);");
+        DB::statement("UPDATE `addresses` SET `location` = ST_GeomFromText('POINT(0 0)', 4326);");
 
         DB::statement("ALTER TABLE `table` CHANGE `location` `location` POINT NOT NULL;");
 
