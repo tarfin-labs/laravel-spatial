@@ -8,6 +8,13 @@ This is a Laravel package to work with geospatial data types and functions.
 
 It supports only MySQL Spatial Data Types and Functions, other RDBMS is on the roadmap.
 
+### Laravel Compatibility
+
+| Version | Supported Laravel Versions |
+|---------|----------------------------|
+| `2.x`   | `^11.0`                    |
+| `1.x`   | `^8.0, ^9.0, ^10.0`        |
+
 **Supported data types:**
 - `Point`
 
@@ -34,24 +41,28 @@ php artisan make:model Address --migration
 
 ### 1- Migrations:
 
+## Code Differences Based on Laravel Version
+
+Some code snippets in the project differ before and after Laravel 11 version. Below are the steps to specify these differences:
+
+### For Laravel 8, 9, and 10 Versions
+
 To add a spatial data field, you need to extend the migration from `TarfinLabs\LaravelSpatial\Migrations\SpatialMigration`.
 
 It is a simple abstract class that adds `point` spatial data type to Doctrine mapped types in the constructor.
-
 ```php
 use TarfinLabs\LaravelSpatial\Migrations\SpatialMigration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends SpatialMigration {
-    
+
     public function up(): void
     {
         Schema::create('addresses', function (Blueprint $table) {
             $table->point('location');
         })
     }
-
 }
 ```
 
@@ -64,16 +75,38 @@ So you should give an SRID attribute to use spatial indexes in the migrations an
 ```php
 Schema::create('addresses', function (Blueprint $table) {
     $table->point(column: 'location', srid: 4326);
-    
+
     $table->spatialIndex('location');
 })
 ```
+### For Laravel 11 and Above Versions
+
+From Laravel 11 onwards, migrations are created as follows:
+
+```php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    
+    public function up(): void
+    {
+        Schema::create('addresses', function (Blueprint $table) {
+            $table->geography('location', 'point');
+        })
+    }
+
+}
+```
+In Laravel 11, the methods **point**, **lineString**, **polygon**, **geometryCollection**, **multiPoint**, **multiLineString**, and **multiPolygon** have been removed. Therefore, we are updating to use the **geography** method instead. The `geography` method sets the default SRID value to 4326.
 
 #### Issue with adding a new location column with index to an existing table:
 When adding a new location column with an index in Laravel, it can be troublesome if you have existing data. One common mistake is trying to set a default value for the new column using `->default(new Point(0, 0, 4326))`. However, `POINT` columns cannot have a default value, which can cause issues when trying to add an index to the column, as indexed columns cannot be nullable.
 
 To solve this problem, it is recommended to perform a two-step migration like following:
 
+### For Laravel 8, 9, and 10 Versions
 ```php
 public function up()
 {
@@ -85,6 +118,28 @@ public function up()
     // In the second go, set 0,0 values, make the column not null and finally add the spatial index
     Schema::table('table', function (Blueprint $table) {
         DB::statement("UPDATE `table` SET `location` = POINT(0,0);");
+
+        DB::statement("ALTER TABLE `table` CHANGE `location` `location` POINT NOT NULL;");
+
+        $table->spatialIndex('location');
+    });
+}
+```
+
+
+### For Laravel 11 and Above Versions
+
+```php
+public function up()
+{
+    // Add the new location column as nullable
+    Schema::table('table', function (Blueprint $table) {
+        $table->geography('location', 'point')->nullable();
+    });
+
+    // In the second go, set 0,0 values, make the column not null and finally add the spatial index
+    Schema::table('table', function (Blueprint $table) {
+        DB::statement("UPDATE `addresses` SET `location` = ST_GeomFromText('POINT(0 0)', 4326);");
 
         DB::statement("ALTER TABLE `table` CHANGE `location` `location` POINT NOT NULL;");
 
@@ -298,14 +353,6 @@ Either way, you will get the following output for the location casted field:
 composer test
 ```
 
-### Road Map
-- [ ] MultiPoint
-- [ ] LineString
-- [ ] MultiLineString
-- [ ] Polygon
-- [ ] MultiPolygon
-- [ ] GeometryCollection
-
 ### Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
@@ -326,3 +373,4 @@ If you discover any security related issues, please email development@tarfin.com
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+

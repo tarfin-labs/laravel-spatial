@@ -35,7 +35,7 @@ class PointTest extends TestCase
         // 2. Assert
         $this->assertSame(expected: 0.0, actual: $point->getLat());
         $this->assertSame(expected: 0.0, actual: $point->getLng());
-        $this->assertSame(expected: 0, actual: $point->getSrid());
+        $this->assertSame(expected: 4326, actual: $point->getSrid());
     }
 
     /** @test */

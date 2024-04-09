@@ -14,7 +14,7 @@ class Point
 
     protected string $wktOptions;
 
-    public function __construct(float $lat = 0, float $lng = 0, ?int $srid = null)
+    public function __construct(float $lat = 0, float $lng = 0, ?int $srid = 4326)
     {
         $this->lat = $lat;
         $this->lng = $lng;
