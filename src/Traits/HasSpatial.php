@@ -18,50 +18,31 @@ trait HasSpatial
             $query->select('*');
         }
 
-        $query->selectRaw(
-            "ST_Distance(ST_SRID({$column}, ?), ST_SRID(Point(?, ?), ?)) as distance",
-            [
-                $point->getSrid(),
-                $point->getLng(),
-                $point->getLat(),
-                $point->getSrid(),
-            ]
-        );
+        match (DB::connection()->getDriverName()) {
+            'pgsql', 'mysql' => $this->selectDistanceToMysqlAndPostgres($query, $column, $point),
+            'mariadb' => $this->selectDistanceToMariaDb($query, $column, $point),
+            default => throw new \Exception('Unsupported database driver'),
+        };
     }
 
     public function scopeWithinDistanceTo(Builder $query, string $column, Point $point, int $distance): void
     {
-        $query
-            ->whereRaw("ST_AsText({$column}) != ?", [
-                'POINT(0 0)',
-            ])
-            ->whereRaw(
-            "ST_Distance(ST_SRID({$column}, ?), ST_SRID(Point(?, ?), ?)) <= ?",
-            [
-                ...[
-                    $point->getSrid(),
-                    $point->getLng(),
-                    $point->getLat(),
-                    $point->getSrid(),
-                ],
-                $distance,
-            ]
-        );
+        match (DB::connection()->getDriverName()) {
+            'pgsql', 'mysql' => $this->withinDistanceToMysqlAndPostgres($query, $column, $point, $distance),
+            'mariadb' => $this->withinDistanceToMariaDb($query, $column, $point, $distance),
+            default => throw new \Exception('Unsupported database driver'),
+        };
     }
 
     public function scopeOrderByDistanceTo(Builder $query, string $column, Point $point, string $direction = 'asc'): void
     {
         $direction = strtolower($direction) === 'asc' ? 'asc' : 'desc';
 
-        $query->orderByRaw(
-            "ST_Distance(ST_SRID({$column}, ?), ST_SRID(Point(?, ?), ?)) " . $direction,
-            [
-                $point->getSrid(),
-                $point->getLng(),
-                $point->getLat(),
-                $point->getSrid(),
-            ]
-        );
+        match (DB::connection()->getDriverName()) {
+            'pgsql', 'mysql' => $this->orderByDistanceToMysqlAndPostgres($query, $column, $point, $direction),
+            'mariadb' => $this->orderByDistanceToMariaDb($query, $column, $point, $direction),
+            default => throw new \Exception('Unsupported database driver'),
+        };
     }
 
     public function newQuery(): Builder
@@ -84,5 +65,89 @@ trait HasSpatial
     public function getLocationCastedAttributes(): Collection
     {
         return collect($this->getCasts())->filter(fn ($cast) => $cast === LocationCast::class)->keys();
+    }
+
+    private function selectDistanceToMysqlAndPostgres(Builder $query, string $column, Point $point): Builder
+    {
+        return $query->selectRaw(
+            "ST_Distance(ST_SRID({$column}, ?), ST_SRID(Point(?, ?), ?)) as distance",
+            [
+                $point->getSrid(),
+                $point->getLng(),
+                $point->getLat(),
+                $point->getSrid(),
+            ]
+        );
+    }
+
+    private function selectDistanceToMariaDb(Builder $query, string $column, Point $point): Builder
+    {
+        return $query->selectRaw(
+            "ST_Distance(ST_SRID({$column}), ST_SRID(Point(?, ?))) as distance",
+            [
+                $point->getLng(),
+                $point->getLat(),
+            ]
+        );
+    }
+
+    private function withinDistanceToMysqlAndPostgres(Builder $query, string $column, Point $point, int $distance): Builder
+    {
+        return $query
+            ->whereRaw("ST_AsText({$column}) != ?", [
+                'POINT(0 0)',
+            ])
+            ->whereRaw(
+                "ST_Distance(ST_SRID({$column}, ?), ST_SRID(Point(?, ?), ?)) <= ?",
+                [
+                    ...[
+                        $point->getSrid(),
+                        $point->getLng(),
+                        $point->getLat(),
+                        $point->getSrid(),
+                    ],
+                    $distance,
+                ]
+            );
+    }
+
+    private function withinDistanceToMariaDb(Builder $query, string $column, Point $point, int $distance): Builder
+    {
+        return $query
+            ->whereRaw("ST_AsText({$column}) != ?", [
+                'POINT(0 0)',
+            ])
+            ->whereRaw(
+                "ST_Distance(ST_SRID({$column}), ST_SRID(Point(?, ?))) <= ?",
+                [
+                    $point->getLng(),
+                    $point->getLat(),
+                    $distance,
+                ]
+            );
+    }
+
+    private function orderByDistanceToMysqlAndPostgres(Builder $query, string $column, Point $point, string $direction = 'asc'): Builder
+    {
+        return $query->orderByRaw(
+            "ST_Distance(ST_SRID({$column}, ?), ST_SRID(Point(?, ?), ?)) " . $direction,
+            [
+                $point->getSrid(),
+                $point->getLng(),
+                $point->getLat(),
+                $point->getSrid(),
+            ]
+        );
+    }
+
+    private function orderByDistanceToMariaDb(Builder $query, string $column, Point $point, string $direction = 'asc'): Builder
+    {
+        return $query->orderByRaw(
+            "ST_Distance(ST_SRID({$column}), ST_SRID(Point(?, ?))) " . $direction,
+            [
+                $point->getLng(),
+                $point->getLat(),
+            ]
+        );
     }
 }
