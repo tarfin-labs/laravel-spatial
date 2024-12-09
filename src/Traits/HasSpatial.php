@@ -59,7 +59,7 @@ trait HasSpatial
 
         $raw = substr($raw, 0, -2);
 
-        return parent::newQuery()->addSelect('*', DB::raw($raw));
+        return parent::newQuery()->addSelect($this->getTable() . '.*', DB::raw($raw));
     }
 
     public function getLocationCastedAttributes(): Collection
