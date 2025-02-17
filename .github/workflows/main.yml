@@ -1,57 +1,64 @@
 name: run-tests
 
-on: [push, pull_request]
+on:
+  - push
+  - pull_request
 
 jobs:
-    test:
-        runs-on: ubuntu-latest
-        strategy:
-            fail-fast: true
-            matrix:
-                php: ['8.0', 8.1, 8.2, 8.3]
-                laravel: [8, 9, 10, 11]
-                exclude:
-                    - php: '8.0'
-                      laravel: 10
-                    - php: '8.0'
-                      laravel: 11
-                    - php: '8.2'
-                      laravel: 8
-                    - php: '8.1'
-                      laravel: 11
+  test:
+    runs-on: ubuntu-latest
 
-        name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
+    strategy:
+      fail-fast: true
+      matrix:
+        php: ['8.0', 8.1, 8.2, 8.3]
+        laravel: [8, 9, 10, 11, '12']
+        exclude:
+          - php: '8.0'
+            laravel: 10
+          - php: '8.0'
+            laravel: 11
+          - php: '8.2'
+            laravel: 8
+          - php: '8.1'
+            laravel: 11
+          - laravel: '12'
+            php: '8.0'
+          - laravel: '12'
+            php: 8.1
 
-        services:
-            mysql:
-                image: mysql:8.0
-                env:
-                    MYSQL_ALLOW_EMPTY_PASSWORD: yes
-                    MYSQL_DATABASE: laravel_spatial_test
-                ports:
-                    - 3306
-                options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
 
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v2
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: laravel_spatial_test
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
-            - name: Setup PHP
-              uses: shivammathur/setup-php@v2
-              with:
-                  php-version: ${{ matrix.php }}
-                  extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, mysql, mysqli, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
-                  ini-values: error_reporting=E_ALL
-                  tools: composer:v2
-                  coverage: none
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-            - name: Install dependencies
-              run: composer update --prefer-dist --no-interaction --no-progress
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, mysql, mysqli, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
+          ini-values: error_reporting=E_ALL
+          tools: composer:v2
+          coverage: none
 
-            - name: Start database server
-              run: sudo /etc/init.d/mysql start
+      - name: Install dependencies
+        run: composer update --prefer-dist --no-interaction --no-progress
 
-            - name: Execute tests
-              env:
-                  DB_PORT: ${{ job.services.mysql.ports['3306'] }}
-              run: vendor/bin/phpunit --testdox --colors=always --exclude-group skipped
+      - name: Start database server
+        run: sudo /etc/init.d/mysql start
+
+      - name: Execute tests
+        env:
+          DB_PORT: ${{ job.services.mysql.ports['3306'] }}
+        run: vendor/bin/phpunit --testdox --colors=always --exclude-group skipped
