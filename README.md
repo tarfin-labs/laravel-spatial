@@ -12,8 +12,8 @@ It supports only MySQL Spatial Data Types and Functions, other RDBMS is on the r
 
 | Version | Supported Laravel Versions |
 |---------|----------------------------|
-| `2.x`   | `^11.0`                    |
-| `1.x`   | `^8.0, ^9.0, ^10.0`        |
+| `3.x`   | `^11.0`, `^12.0`           |
+| `2.x`   | `^8.0, ^9.0, ^10.0`        |
 
 **Supported data types:**
 - `Point`
@@ -79,27 +79,6 @@ Schema::create('addresses', function (Blueprint $table) {
     $table->spatialIndex('location');
 })
 ```
-### For Laravel 11 and Above Versions
-
-From Laravel 11 onwards, migrations are created as follows:
-
-```php
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration {
-    
-    public function up(): void
-    {
-        Schema::create('addresses', function (Blueprint $table) {
-            $table->geography('location', 'point');
-        })
-    }
-
-}
-```
-In Laravel 11, the methods **point**, **lineString**, **polygon**, **geometryCollection**, **multiPoint**, **multiLineString**, and **multiPolygon** have been removed. Therefore, we are updating to use the **geography** method instead. The `geography` method sets the default SRID value to 4326.
 
 #### Issue with adding a new location column with index to an existing table:
 When adding a new location column with an index in Laravel, it can be troublesome if you have existing data. One common mistake is trying to set a default value for the new column using `->default(new Point(0, 0, 4326))`. However, `POINT` columns cannot have a default value, which can cause issues when trying to add an index to the column, as indexed columns cannot be nullable.
@@ -118,28 +97,6 @@ public function up()
     // In the second go, set 0,0 values, make the column not null and finally add the spatial index
     Schema::table('table', function (Blueprint $table) {
         DB::statement("UPDATE `table` SET `location` = POINT(0,0);");
-
-        DB::statement("ALTER TABLE `table` CHANGE `location` `location` POINT NOT NULL;");
-
-        $table->spatialIndex('location');
-    });
-}
-```
-
-
-### For Laravel 11 and Above Versions
-
-```php
-public function up()
-{
-    // Add the new location column as nullable
-    Schema::table('table', function (Blueprint $table) {
-        $table->geography('location', 'point')->nullable();
-    });
-
-    // In the second go, set 0,0 values, make the column not null and finally add the spatial index
-    Schema::table('table', function (Blueprint $table) {
-        DB::statement("UPDATE `addresses` SET `location` = ST_GeomFromText('POINT(0 0)', 4326);");
 
         DB::statement("ALTER TABLE `table` CHANGE `location` `location` POINT NOT NULL;");
 
