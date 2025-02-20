@@ -2,6 +2,11 @@
 
 All notable changes to `laravel-spatial` will be documented in this file
 
+## 3.0.0 - 2025-02-20
+- Laravel 12 and PHP 8.4 support added.
+- Laravel 10 and below versions are not supported anymore.
+- PHP 8.1 and below versions are not supported anymore.
+
 ## 2.0.1 - 2024-11-27
 - Fix the incorrect parameter count error while using `ST_SRID` functions with `MariaDB`.
 
