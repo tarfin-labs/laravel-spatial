@@ -2,6 +2,9 @@
 
 All notable changes to `laravel-spatial` will be documented in this file
 
+## 2.1.0 - 2025-02-20
+- Removed support for Laravel 11 due to incompatibility with the current implementation.
+
 ## 2.0.1 - 2024-11-27
 - Fix the incorrect parameter count error while using `ST_SRID` functions with `MariaDB`.
 
