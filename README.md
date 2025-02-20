@@ -12,8 +12,8 @@ It supports only MySQL Spatial Data Types and Functions, other RDBMS is on the r
 
 | Version | Supported Laravel Versions |
 |---------|----------------------------|
-| `2.x`   | `^11.0`                    |
-| `1.x`   | `^8.0, ^9.0, ^10.0`        |
+| `3.x`   | `^11.0`, `^12.0`           |
+| `2.x`   | `^8.0, ^9.0, ^10.0`        |
 
 **Supported data types:**
 - `Point`
@@ -41,43 +41,6 @@ php artisan make:model Address --migration
 
 ### 1- Migrations:
 
-## Code Differences Based on Laravel Version
-
-Some code snippets in the project differ before and after Laravel 11 version. Below are the steps to specify these differences:
-
-### For Laravel 8, 9, and 10 Versions
-
-To add a spatial data field, you need to extend the migration from `TarfinLabs\LaravelSpatial\Migrations\SpatialMigration`.
-
-It is a simple abstract class that adds `point` spatial data type to Doctrine mapped types in the constructor.
-```php
-use TarfinLabs\LaravelSpatial\Migrations\SpatialMigration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends SpatialMigration {
-
-    public function up(): void
-    {
-        Schema::create('addresses', function (Blueprint $table) {
-            $table->point('location');
-        })
-    }
-}
-```
-
-The migration above creates an `addresses` table with a `location` spatial column.
-
-> Spatial columns with no SRID attribute are not SRID-restricted and accept values with any SRID. However, the optimizer cannot use SPATIAL indexes on them until the column definition is modified to include an SRID attribute, which may require that the column contents first be modified so that all values have the same SRID.
-
-So you should give an SRID attribute to use spatial indexes in the migrations and indexed columns must be NOT NULL:
-
-```php
-Schema::create('addresses', function (Blueprint $table) {
-    $table->point(column: 'location', srid: 4326);
-
-    $table->spatialIndex('location');
-})
 ```
 ### For Laravel 11 and Above Versions
 
@@ -93,7 +56,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('addresses', function (Blueprint $table) {
-            $table->geography('location', 'point');
+            $table->geography('location', subtype: 'point');
         })
     }
 
@@ -105,27 +68,6 @@ In Laravel 11, the methods **point**, **lineString**, **polygon**, **geometryCol
 When adding a new location column with an index in Laravel, it can be troublesome if you have existing data. One common mistake is trying to set a default value for the new column using `->default(new Point(0, 0, 4326))`. However, `POINT` columns cannot have a default value, which can cause issues when trying to add an index to the column, as indexed columns cannot be nullable.
 
 To solve this problem, it is recommended to perform a two-step migration like following:
-
-### For Laravel 8, 9, and 10 Versions
-```php
-public function up()
-{
-    // Add the new location column as nullable
-    Schema::table('table', function (Blueprint $table) {
-        $table->point('location')->nullable();
-    });
-
-    // In the second go, set 0,0 values, make the column not null and finally add the spatial index
-    Schema::table('table', function (Blueprint $table) {
-        DB::statement("UPDATE `table` SET `location` = POINT(0,0);");
-
-        DB::statement("ALTER TABLE `table` CHANGE `location` `location` POINT NOT NULL;");
-
-        $table->spatialIndex('location');
-    });
-}
-```
-
 
 ### For Laravel 11 and Above Versions
 
