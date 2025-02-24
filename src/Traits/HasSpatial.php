@@ -15,7 +15,7 @@ trait HasSpatial
     public function scopeSelectDistanceTo(Builder $query, string $column, Point $point): void
     {
         if (is_null($query->getQuery()->columns)) {
-            $query->select('*');
+            $query->select("{$this->getTable()}.*");
         }
 
         match (DB::connection()->getDriverName()) {
@@ -59,7 +59,7 @@ trait HasSpatial
 
         $raw = substr($raw, 0, -2);
 
-        return parent::newQuery()->addSelect('*', DB::raw($raw));
+        return parent::newQuery()->addSelect("{$this->getTable()}.*", DB::raw($raw));
     }
 
     public function getLocationCastedAttributes(): Collection
