@@ -2,6 +2,7 @@
 
 namespace TarfinLabs\LaravelSpatial\Tests;
 
+use Illuminate\Database\Query\Expression;
 use InvalidArgumentException;
 use Illuminate\Support\Facades\DB;
 use TarfinLabs\LaravelSpatial\Casts\LocationCast;
@@ -71,6 +72,24 @@ class LocationCastTest extends TestCase
         $this->assertEquals($point->getLat(), $address->location->getLat());
         $this->assertEquals($point->getLng(), $address->location->getLng());
         $this->assertEquals($point->getSrid(), $address->location->getSrid());
+    }
+
+    /** @test */
+    public function it_can_get_a_casted_attribute_using_expression(): void
+    {
+        // 1. Arrange
+        $address = new Address();
+        $point = new Point(27.1234, 39.1234);
+
+        // 2. Act
+        $cast   = new LocationCast();
+        $result = $cast->get($address, 'location', new Expression($point->toGeomFromText()), $address->getAttributes());
+
+        // 3. Assert
+        $this->assertInstanceOf(Point::class, $result);
+        $this->assertEquals($point->getLat(), $result->getLat());
+        $this->assertEquals($point->getLng(), $result->getLng());
+        $this->assertEquals($point->getSrid(), $result->getSrid());
     }
 
     /** @test */
