@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace TarfinLabs\LaravelSpatial\Tests;
 
 use Illuminate\Support\Facades\Config;
+use PHPUnit\Framework\Attributes\Test;
 use TarfinLabs\LaravelSpatial\Types\Point;
 
 class PointTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function it_sets_lat_lng_and_srid_in_constructor(): void
     {
         // 1. Arrange
@@ -26,7 +27,7 @@ class PointTest extends TestCase
         $this->assertSame(expected: $srid, actual: $point->getSrid());
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_default_lat_lng_and_srid_if_they_are_not_given_in_the_constructor(): void
     {
         // 1. Act
@@ -38,7 +39,7 @@ class PointTest extends TestCase
         $this->assertSame(expected: 4326, actual: $point->getSrid());
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_default_srid_in_config_if_it_is_not_null(): void
     {
         // 1. Arrange
@@ -53,7 +54,7 @@ class PointTest extends TestCase
         $this->assertSame(expected: 4326, actual: $point->getSrid());
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_point_as_wkt(): void
     {
         // 1. Arrange
@@ -66,7 +67,7 @@ class PointTest extends TestCase
         $this->assertSame("POINT({$point->getLng()} {$point->getLat()})", $wkt);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_point_as_pair(): void
     {
         // 1. Arrange
@@ -79,10 +80,7 @@ class PointTest extends TestCase
         $this->assertSame("{$point->getLng()} {$point->getLat()}", $pair);
     }
 
-    /**
-     * @test
-     * @see
-     */
+    #[Test]
     public function it_returns_points_as_geometry(): void
     {
         // 1. Arrange
@@ -95,7 +93,7 @@ class PointTest extends TestCase
         $this->assertSame("ST_GeomFromText('{$point->toWkt()}', {$point->getSrid()}, 'axis-order=long-lat')", $geometry);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_points_as_array(): void
     {
         // 1. Arrange
