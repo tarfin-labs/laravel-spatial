@@ -2,6 +2,9 @@
 
 All notable changes to `laravel-spatial` will be documented in this file
 
+## 2.2.0 - 2025-05-15
+- Expression support added to `get()` method in `LocationCast`.
+
 ## 2.1.0 - 2025-02-20
 - Removed support for Laravel 11 due to incompatibility with the current implementation.
 
