@@ -2,12 +2,13 @@
 
 namespace TarfinLabs\LaravelSpatial\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use TarfinLabs\LaravelSpatial\Tests\TestModels\Address;
 use TarfinLabs\LaravelSpatial\Types\Point;
 
 class HasSpatialTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function it_generates_sql_query_for_selectDistanceTo_scope(): void
     {
         // Arrange
@@ -24,7 +25,7 @@ class HasSpatialTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_sql_query_for_withinDistanceTo_scope(): void
     {
         // 1. Arrange
@@ -41,7 +42,7 @@ class HasSpatialTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_sql_query_for_orderByDistanceTo_scope(): void
     {
         // 1. Arrange
@@ -64,7 +65,7 @@ class HasSpatialTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_sql_query_for_location_casted_attributes(): void
     {
         // 1. Arrange
@@ -78,7 +79,7 @@ class HasSpatialTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_location_casted_attributes(): void
     {
         // 1. Arrange
