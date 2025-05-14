@@ -2,7 +2,7 @@
 
 All notable changes to `laravel-spatial` will be documented in this file
 
-## 3.0.1 - 2025-05-14
+## 3.1.0 - 2025-05-14
 - Expression support added to `get()` method in `LocationCast`.
 - Replaced `@test` annotations with `#[Test]` attributes across the test suite for modern PHPUnit syntax.
 
