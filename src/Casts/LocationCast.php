@@ -19,7 +19,7 @@ class LocationCast implements CastsAttributes, SerializesCastableAttributes
             return null;
         }
 
-        $coordinates = explode(',', $value);
+        $coordinates = $this->getCoordinates($model, $value);
 
         if (count($coordinates) > 1) {
             $location = explode(',', str_replace(['POINT(', ')', ' '], ['', '', ','], $coordinates[0]));
@@ -50,5 +50,23 @@ class LocationCast implements CastsAttributes, SerializesCastableAttributes
     public function serialize($model, string $key, $value, array $attributes): array
     {
         return $value->toArray();
+    }
+
+    private function getCoordinates($model, $value): array
+    {
+        if ($value instanceof Expression) {
+            preg_match(
+                pattern: "/ST_GeomFromText\(\s*'([^']+)'\s*(?:,\s*(\d+))?\s*(?:,\s*'([^']+)')?\s*\)/",
+                subject: (string) $value->getValue($model->getConnection()->getQueryGrammar()),
+                matches: $matches,
+            );
+
+            return [
+                $matches[1],
+                (int) ($matches[2] ?? 0),
+            ];
+        }
+
+        return explode(',', $value);
     }
 }
