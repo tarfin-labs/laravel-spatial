@@ -25,7 +25,7 @@ trait HasSpatial
         };
     }
 
-    public function scopeWithinDistanceTo(Builder $query, string $column, Point $point, int $distance): void
+    public function scopeWithinDistanceTo(Builder $query, string $column, Point $point, float $distance): void
     {
         match (DB::connection()->getDriverName()) {
             'pgsql', 'mysql' => $this->withinDistanceToMysqlAndPostgres($query, $column, $point, $distance),
@@ -91,7 +91,7 @@ trait HasSpatial
         );
     }
 
-    private function withinDistanceToMysqlAndPostgres(Builder $query, string $column, Point $point, int $distance): Builder
+    private function withinDistanceToMysqlAndPostgres(Builder $query, string $column, Point $point, float $distance): Builder
     {
         return $query
             ->whereRaw("ST_AsText({$column}) != ?", [
@@ -111,7 +111,7 @@ trait HasSpatial
             );
     }
 
-    private function withinDistanceToMariaDb(Builder $query, string $column, Point $point, int $distance): Builder
+    private function withinDistanceToMariaDb(Builder $query, string $column, Point $point, float $distance): Builder
     {
         return $query
             ->whereRaw("ST_AsText({$column}) != ?", [

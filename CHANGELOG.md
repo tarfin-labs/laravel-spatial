@@ -2,6 +2,9 @@
 
 All notable changes to `laravel-spatial` will be documented in this file
 
+## 2.2.1 - 2025-06-12
+- Fixed `$distance` parameter type from `int` to `float` in `scopeWithinDistanceTo` and related methods to properly handle decimal distance values returned by `ST_Distance` function.
+
 ## 2.2.0 - 2025-05-15
 - Expression support added to `get()` method in `LocationCast`.
 
