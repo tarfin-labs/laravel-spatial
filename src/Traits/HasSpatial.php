@@ -64,7 +64,7 @@ trait HasSpatial
 
     public function getLocationCastedAttributes(): Collection
     {
-        return collect($this->getCasts())->filter(fn($cast) => $cast === LocationCast::class)->keys();
+        return collect($this->getCasts())->filter(fn ($cast) => $cast === LocationCast::class)->keys();
     }
 
     private function selectDistanceToMysqlAndPostgres(Builder $query, string $column, Point $point): Builder
