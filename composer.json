@@ -1,55 +1,54 @@
 {
-  "name": "tarfin-labs/laravel-spatial",
-  "description": "Laravel package to work with geospatial data types and functions.",
-  "keywords": [
-    "tarfin-labs",
-    "laravel-spatial"
-  ],
-  "homepage": "https://github.com/tarfin-labs/laravel-spatial",
-  "license": "MIT",
-  "type": "library",
-  "authors": [
-    {
-      "name": "Turan Karatuğ",
-      "email": "turan.karatug@tarfin.com",
-      "role": "Developer"
+    "name": "tarfin-labs/laravel-spatial",
+    "description": "Laravel package to work with geospatial data types and functions.",
+    "keywords": [
+        "tarfin-labs",
+        "laravel-spatial"
+    ],
+    "homepage": "https://github.com/tarfin-labs/laravel-spatial",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Turan Karatuğ",
+            "email": "turan.karatug@tarfin.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.2|^8.3|^8.4",
+        "illuminate/support": "^11.0|^12.0|^13.0"
+    },
+    "require-dev": {
+        "doctrine/dbal": "^3.3|^4.4",
+        "orchestra/testbench": "^9.0|^10.0|^11.0",
+        "phpunit/phpunit": "^10.0|^11.0|^12.5.12"
+    },
+    "autoload": {
+        "psr-4": {
+            "TarfinLabs\\LaravelSpatial\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TarfinLabs\\LaravelSpatial\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "TarfinLabs\\LaravelSpatial\\LaravelSpatialServiceProvider"
+            ],
+            "aliases": {
+                "LaravelSpatial": "TarfinLabs\\LaravelSpatial\\LaravelSpatialFacade"
+            }
+        }
     }
-  ],
-  "require": {
-    "php": "^8.2|^8.3|^8.4",
-    "illuminate/support": "^11.0|^12.0"
-  },
-  "require-dev": {
-    "doctrine/dbal": "^3.3",
-    "orchestra/testbench": "^9.0|^10.0",
-    "phpunit/phpunit": "^10.0|^11.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "TarfinLabs\\LaravelSpatial\\": "src"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "TarfinLabs\\LaravelSpatial\\Tests\\": "tests"
-    }
-  },
-  "scripts": {
-    "test": "vendor/bin/phpunit",
-    "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
-
-  },
-  "config": {
-    "sort-packages": true
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "TarfinLabs\\LaravelSpatial\\LaravelSpatialServiceProvider"
-      ],
-      "aliases": {
-        "LaravelSpatial": "TarfinLabs\\LaravelSpatial\\LaravelSpatialFacade"
-      }
-    }
-  }
 }
