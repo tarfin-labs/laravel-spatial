@@ -5,48 +5,51 @@ on:
   - pull_request
 
 jobs:
-    test:
-        runs-on: ubuntu-latest
+  test:
+    runs-on: ubuntu-latest
 
-        services:
-            mysql:
-                image: mysql:8.0
-                env:
-                    MYSQL_ALLOW_EMPTY_PASSWORD: yes
-                    MYSQL_DATABASE: laravel_spatial_test
-                ports:
-                    - 3306
-                options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: laravel_spatial_test
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
-        strategy:
-            fail-fast: true
-            matrix:
-                php: [8.2, 8.3, 8.4]
-                laravel: [11, 12]
-                stability: [prefer-lowest, prefer-stable]
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [8.2, 8.3, 8.4]
+        laravel: [11, 12, 13]
+        stability: [prefer-lowest, prefer-stable]
+        exclude:
+          - laravel: '13'
+            php: 8.2
 
-        name: P${{ matrix.php }} - L${{ matrix.laravel }}
+    name: P${{ matrix.php }} - L${{ matrix.laravel }}
 
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-            - name: Setup PHP
-              uses: shivammathur/setup-php@v2
-              with:
-                  php-version: ${{ matrix.php }}
-                  extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, mysql, mysqli, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
-                  ini-values: error_reporting=E_ALL
-                  tools: composer:v2
-                  coverage: none
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, mysql, mysqli, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
+          ini-values: error_reporting=E_ALL
+          tools: composer:v2
+          coverage: none
 
-            - name: Install dependencies
-              run: composer update --prefer-dist --no-interaction --no-progress
+      - name: Install dependencies
+        run: composer update --prefer-dist --no-interaction --no-progress
 
-            - name: Start database server
-              run: sudo /etc/init.d/mysql start
+      - name: Start database server
+        run: sudo /etc/init.d/mysql start
 
-            - name: Execute tests
-              env:
-                  DB_PORT: ${{ job.services.mysql.ports['3306'] }}
-              run: vendor/bin/phpunit --testdox --colors=always --exclude-group skipped
+      - name: Execute tests
+        env:
+          DB_PORT: ${{ job.services.mysql.ports['3306'] }}
+        run: vendor/bin/phpunit --testdox --colors=always --exclude-group skipped
