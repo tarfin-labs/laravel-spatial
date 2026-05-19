@@ -7,6 +7,7 @@ namespace TarfinLabs\LaravelSpatial\Traits;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use TarfinLabs\LaravelSpatial\Casts\RegionCast;
 use TarfinLabs\LaravelSpatial\Casts\LocationCast;
 use TarfinLabs\LaravelSpatial\Types\Point;
 
@@ -53,7 +54,9 @@ trait HasSpatial
             ? ', \'axis-order=long-lat\''
             : '';
 
-        foreach ($this->getLocationCastedAttributes() as $column) {
+        $spatialAttributes = $this->getLocationCastedAttributes()->merge($this->getRegionCastedAttributes());
+
+        foreach ($spatialAttributes as $column) {
             $raw .= "CONCAT(ST_AsText({$this->getTable()}.{$column}$wktOptions), ',', ST_SRID({$this->getTable()}.{$column})) as {$column}, ";
         }
 
@@ -65,6 +68,11 @@ trait HasSpatial
     public function getLocationCastedAttributes(): Collection
     {
         return collect($this->getCasts())->filter(fn ($cast) => $cast === LocationCast::class)->keys();
+    }
+
+    public function getRegionCastedAttributes(): Collection
+    {
+        return collect($this->getCasts())->filter(fn ($cast) => $cast === RegionCast::class)->keys();
     }
 
     private function selectDistanceToMysqlAndPostgres(Builder $query, string $column, Point $point): Builder
